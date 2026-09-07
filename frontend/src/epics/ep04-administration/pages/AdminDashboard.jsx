@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
   TrendingUp,
-  TrendingDown,
   ShoppingBag,
   DollarSign,
   Truck,
@@ -10,16 +9,15 @@ import {
   RefreshCw,
   Search,
   Eye,
-  Calendar,
   Sparkles,
   ArrowUpRight
 } from 'lucide-react';
-import { getDashboardStats, getRecentOrders } from '../../services/dashboard.service';
-import Badge from '../../components/common/Badge';
-import Modal from '../../components/common/Modal';
-import Button from '../../components/common/Button';
-import Loader from '../../components/common/Loader';
-import { useToast } from '../../context/ToastContext';
+import { getDashboardStats, getRecentOrders } from '../services/dashboard.service';
+import Badge from '../../../components/common/Badge';
+import Modal from '../../../components/common/Modal';
+import Button from '../../../components/common/Button';
+import Loader from '../../../components/common/Loader';
+import { useToast } from '../../../context/ToastContext';
 import './AdminDashboard.css';
 
 export default function AdminDashboard() {

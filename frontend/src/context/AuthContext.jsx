@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback } from 'react';
-import { validateAdminKey, adminLogout } from '../services/auth.service';
+import { validateAdminKey, adminLogout } from '../epics/ep04-administration/services/auth.service';
 
 const AuthContext = createContext(null);
 

@@ -1,7 +1,7 @@
-import apiClient from './apiClient';
+import apiClient from '../../../services/apiClient';
 
 /**
- * Admin Authentication Service
+ * EP-04 Admin Authentication Service
  * Handles communication with the EP-04 admin auth endpoints.
  */
 

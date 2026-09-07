@@ -1,4 +1,4 @@
-import apiClient from './apiClient';
+import apiClient from '../../../services/apiClient';
 
 /**
  * EP-04 Dashboard API Service

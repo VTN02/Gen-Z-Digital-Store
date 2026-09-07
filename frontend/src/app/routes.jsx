@@ -2,8 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 import StorefrontLayout from '../components/layout/StorefrontLayout';
 import AdminLayout from '../components/layout/AdminLayout';
 import LandingPage from '../pages/landing/LandingPage';
-import AdminLogin from '../pages/admin/AdminLogin';
-import AdminDashboard from '../pages/admin/AdminDashboard';
+import AdminLogin from '../epics/ep04-administration/pages/AdminLogin';
+import AdminDashboard from '../epics/ep04-administration/pages/AdminDashboard';
 
 /**
  * Application routes.

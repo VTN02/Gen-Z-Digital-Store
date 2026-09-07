@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { Shield, Eye, EyeOff, ArrowLeft, Lock, Sparkles } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import Button from '../../components/common/Button';
+import { useAuth } from '../../../context/AuthContext';
+import Button from '../../../components/common/Button';
 import './AdminLogin.css';
 
 export default function AdminLogin() {
