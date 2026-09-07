@@ -2,10 +2,12 @@ import { Routes, Route } from 'react-router-dom';
 import StorefrontLayout from '../components/layout/StorefrontLayout';
 import AdminLayout from '../components/layout/AdminLayout';
 import LandingPage from '../pages/landing/LandingPage';
+
 import AdminLogin from '../epics/ep04-administration/pages/AdminLogin';
 import AdminDashboard from '../epics/ep04-administration/pages/AdminDashboard';
 import SupplierListPage from '../modules/supplier-procurement/pages/SupplierListPage';
 import AdminReviewListPage from '../epics/ep03-delivery-review/pages/AdminReviewListPage';
+
 
 /**
  * Application routes.
@@ -39,11 +41,12 @@ export default function AppRoutes() {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
         <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="inventory" element={<ComingSoon title="Inventory & Stock Management" />} />
         <Route path="suppliers" element={<SupplierListPage />} />
-        <Route path="deliveries" element={<ComingSoon title="Delivery Management & Tracking (EP-03)" />} />
         <Route path="reviews" element={<AdminReviewListPage />} />
-        <Route path="staff" element={<ComingSoon title="Staff & Role Management" />} />
-        <Route path="settings" element={<ComingSoon title="Store Configuration" />} />
+        <Route path="deliveries" element={<ComingSoon title="Delivery Management & Tracking" />} />
+        <Route path="staff" element={<ComingSoon title="Staff Management" />} />
+        <Route path="settings" element={<ComingSoon title="Store Settings" />} />
       </Route>
     </Routes>
   );
@@ -72,7 +75,7 @@ function ComingSoon({ title }) {
         {title}
       </h1>
       <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-        Under Development
+        Coming Soon — Stage 2
       </p>
     </div>
   );
@@ -95,7 +98,7 @@ function NotFound() {
         Page Not Found
       </h1>
       <a href="/" style={{ color: 'var(--color-accent)', fontSize: '0.875rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-        &larr; Back to Home
+        ← Back to Home
       </a>
     </div>
   );

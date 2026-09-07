@@ -10,7 +10,8 @@ import {
   Clock,
   ShieldCheck,
   AlertCircle,
-  Eye
+  Eye,
+  RotateCcw
 } from 'lucide-react';
 import {
   getAdminReviews,
@@ -48,7 +49,7 @@ export default function AdminReviewListPage() {
         status: activeTab,
         search,
       });
-      setReviews(data);
+      setReviews(data || []);
     } catch (err) {
       console.error(err);
       toast.error('Failed to load customer reviews.');
@@ -99,101 +100,100 @@ export default function AdminReviewListPage() {
     }
   };
 
-  // Metrics
+  // KPIs
   const totalReviews = reviews.length;
   const pendingCount = reviews.filter((r) => r.status === 'PENDING').length;
   const approvedCount = reviews.filter((r) => r.status === 'APPROVED').length;
-  const avgRating =
-    reviews.length > 0
-      ? (reviews.reduce((acc, r) => acc + (r.rating || 5), 0) / reviews.length).toFixed(1)
-      : '5.0';
+  const avgRating = totalReviews
+    ? (reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / totalReviews).toFixed(1)
+    : '5.0';
 
   return (
     <div className="admin-reviews-page">
-      {/* ── Header Banner ── */}
+      {/* ── Hero Banner ── */}
       <div className="admin-reviews-hero">
         <div className="admin-reviews-hero__text">
           <div className="admin-reviews-hero__tag">
-            <Sparkles size={13} />
-            <span>CUSTOMER EXPERIENCE (EP-03)</span>
+            <Sparkles size={13} className="admin-reviews-hero__sparkle" />
+            <span>EP-03 &middot; COMMUNITY FEEDBACK &amp; TRUST</span>
           </div>
-          <h1 className="admin-reviews-hero__title">Review Moderation &amp; Feedback</h1>
+          <h1 className="admin-reviews-hero__title">Customer Review Moderation</h1>
           <p className="admin-reviews-hero__subtitle">
-            Verify buyer submissions, moderate product testimonials, and manage public store satisfaction ratings.
+            Inspect, approve, reject, or archive customer reviews submitted through the storefront.
           </p>
         </div>
       </div>
 
-      {/* ── KPI Metric Cards ── */}
-      <section className="admin-reviews-kpis" aria-label="Review Metrics">
-        <div className="admin-reviews-kpi">
-          <div className="admin-reviews-kpi__top">
-            <span className="admin-reviews-kpi__label">Total Submissions</span>
-            <div className="admin-reviews-kpi__icon">
+      {/* ── KPI Grid ── */}
+      <div className="admin-reviews-kpis">
+        <div className="admin-review-kpi">
+          <div className="admin-review-kpi__top">
+            <span className="admin-review-kpi__lbl">Total Feedback</span>
+            <div className="admin-review-kpi__icon admin-review-kpi__icon--indigo">
               <MessageSquare size={18} />
             </div>
           </div>
-          <div className="admin-reviews-kpi__val">{totalReviews}</div>
-          <span className="admin-reviews-kpi__sub">Feedback in database</span>
+          <div className="admin-review-kpi__val">{totalReviews}</div>
+          <span className="admin-review-kpi__sub">Across all departments</span>
         </div>
 
-        <div className="admin-reviews-kpi">
-          <div className="admin-reviews-kpi__top">
-            <span className="admin-reviews-kpi__label">Pending Moderation</span>
-            <div className="admin-reviews-kpi__icon admin-reviews-kpi__icon--warning">
+        <div className="admin-review-kpi">
+          <div className="admin-review-kpi__top">
+            <span className="admin-review-kpi__lbl">Pending Moderation</span>
+            <div className="admin-review-kpi__icon admin-review-kpi__icon--warning">
               <Clock size={18} />
             </div>
           </div>
-          <div className="admin-reviews-kpi__val">{pendingCount}</div>
-          <span className="admin-reviews-kpi__sub">Awaiting admin review</span>
+          <div className="admin-review-kpi__val">{pendingCount}</div>
+          <span className="admin-review-kpi__sub">Awaiting executive decision</span>
         </div>
 
-        <div className="admin-reviews-kpi">
-          <div className="admin-reviews-kpi__top">
-            <span className="admin-reviews-kpi__label">Approved &amp; Live</span>
-            <div className="admin-reviews-kpi__icon admin-reviews-kpi__icon--success">
+        <div className="admin-review-kpi">
+          <div className="admin-review-kpi__top">
+            <span className="admin-review-kpi__lbl">Live On Store</span>
+            <div className="admin-review-kpi__icon admin-review-kpi__icon--cyan">
               <ShieldCheck size={18} />
             </div>
           </div>
-          <div className="admin-reviews-kpi__val">{approvedCount}</div>
-          <span className="admin-reviews-kpi__sub">Published on storefront</span>
+          <div className="admin-review-kpi__val">{approvedCount}</div>
+          <span className="admin-review-kpi__sub">Publicly visible on landing</span>
         </div>
 
-        <div className="admin-reviews-kpi">
-          <div className="admin-reviews-kpi__top">
-            <span className="admin-reviews-kpi__label">Store Satisfaction</span>
-            <div className="admin-reviews-kpi__icon admin-reviews-kpi__icon--gold">
+        <div className="admin-review-kpi">
+          <div className="admin-review-kpi__top">
+            <span className="admin-review-kpi__lbl">Average Rating</span>
+            <div className="admin-review-kpi__icon admin-review-kpi__icon--emerald">
               <Star size={18} />
             </div>
           </div>
-          <div className="admin-reviews-kpi__val">⭐ {avgRating} / 5.0</div>
-          <span className="admin-reviews-kpi__sub">Average customer rating</span>
+          <div className="admin-review-kpi__val">{avgRating} / 5.0</div>
+          <span className="admin-review-kpi__sub">Vanguard customer score</span>
         </div>
-      </section>
+      </div>
 
-      {/* ── Tab & Search Filter Bar ── */}
+      {/* ── Tabs & Search Bar ── */}
       <div className="admin-reviews-controls">
         <div className="admin-reviews-tabs">
           {TABS.map((tab) => (
             <button
               key={tab.id}
-              className={`admin-reviews-tab-btn ${activeTab === tab.id ? 'admin-reviews-tab-btn--active' : ''}`}
+              className={`admin-reviews-tab ${activeTab === tab.id ? 'admin-reviews-tab--active' : ''}`}
               onClick={() => setActiveTab(tab.id)}
             >
               <span>{tab.label}</span>
               {tab.id === 'PENDING' && pendingCount > 0 && (
-                <span className="admin-reviews-tab-badge">{pendingCount}</span>
+                <span className="admin-reviews-tab__badge">{pendingCount}</span>
               )}
             </button>
           ))}
         </div>
 
         <div className="admin-reviews-search">
-          <Search size={15} className="admin-reviews-search-icon" />
+          <Search size={15} className="admin-reviews-search__icon" />
           <input
             type="text"
-            className="admin-reviews-search-input"
-            placeholder="Search reviews, customer names, titles..."
+            className="admin-reviews-search__input"
+            placeholder="Search by customer, title, text..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -201,77 +201,76 @@ export default function AdminReviewListPage() {
       </div>
 
       {/* ── Reviews Table Card ── */}
-      <div className="admin-reviews-card">
+      <div className="admin-reviews-table-card">
         {loading ? (
           <div className="admin-reviews-loading">
-            <Loader size="lg" message="Loading customer feedback..." />
+            <Loader size="md" message="Loading review archives..." />
           </div>
         ) : reviews.length === 0 ? (
           <div className="admin-reviews-empty">
-            <AlertCircle size={36} className="admin-reviews-empty-icon" />
-            <h3 className="admin-reviews-empty-title">No reviews found</h3>
-            <p className="admin-reviews-empty-text">
-              There are no reviews matching the current tab and filter criteria.
+            <AlertCircle size={38} className="admin-reviews-empty__icon" />
+            <h3 className="admin-reviews-empty__title">No Reviews Found</h3>
+            <p className="admin-reviews-empty__desc">
+              No customer feedback matches the selected moderation tab or search filter.
             </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setActiveTab('ALL');
+                setSearch('');
+              }}
+            >
+              Reset Filters
+            </Button>
           </div>
         ) : (
-          <div className="admin-reviews-table-container">
+          <div className="admin-reviews-table-wrap">
             <table className="admin-reviews-table">
               <thead>
                 <tr>
-                  <th>Review ID</th>
-                  <th>Customer</th>
-                  <th>Rating</th>
-                  <th>Headline &amp; Commentary</th>
-                  <th>Category</th>
-                  <th>Submitted</th>
+                  <th>Review #</th>
+                  <th>Customer &amp; Category</th>
+                  <th>Score</th>
+                  <th>Title &amp; Commentary</th>
                   <th>Status</th>
-                  <th>Moderation Actions</th>
+                  <th>Date</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {reviews.map((rev) => (
                   <tr key={rev.id} className="admin-reviews-row">
                     <td>
-                      <span className="review-id-tag">{rev.id}</span>
+                      <span className="admin-reviews-id">{rev.id}</span>
                     </td>
                     <td>
-                      <div className="review-customer-cell">
-                        <span className="review-customer-name">{rev.customerName}</span>
-                        {rev.customerEmail && (
-                          <span className="review-customer-email">{rev.customerEmail}</span>
-                        )}
-                        {rev.verifiedBuyer && (
-                          <span className="review-verified-badge">Verified Buyer</span>
-                        )}
+                      <div className="admin-reviews-customer">
+                        <span className="admin-reviews-customer__name">{rev.customerName}</span>
+                        <span className="admin-reviews-customer__category">{rev.productCategory || "Men's Fashion"}</span>
                       </div>
                     </td>
                     <td>
-                      <div className="review-stars-cell">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            size={14}
-                            className={i < rev.rating ? 'gold-star-active' : 'star-inactive'}
-                          />
-                        ))}
+                      <div className="admin-reviews-stars">
+                        <div className="admin-reviews-star-icons">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              size={12}
+                              className={star <= rev.rating ? 'star-filled' : 'star-empty'}
+                            />
+                          ))}
+                        </div>
+                        <span className="admin-reviews-stars__val">{rev.rating}.0</span>
                       </div>
                     </td>
                     <td>
-                      <div className="review-content-cell">
-                        <span className="review-title">{rev.title}</span>
-                        <p className="review-comment" title={rev.comment}>
+                      <div className="admin-reviews-text">
+                        <span className="admin-reviews-title">{rev.title}</span>
+                        <p className="admin-reviews-comment" title={rev.comment}>
                           {rev.comment}
                         </p>
                       </div>
-                    </td>
-                    <td>
-                      <span className="review-category-pill">{rev.productCategory}</span>
-                    </td>
-                    <td>
-                      <span className="review-date">
-                        {new Date(rev.createdAt).toLocaleDateString()}
-                      </span>
                     </td>
                     <td>
                       <Badge variant={getStatusBadgeVariant(rev.status)}>
@@ -279,21 +278,26 @@ export default function AdminReviewListPage() {
                       </Badge>
                     </td>
                     <td>
-                      <div className="review-actions-group">
+                      <span className="admin-reviews-date">
+                        {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('en-GB') : 'Recently'}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="admin-reviews-actions">
                         <button
-                          className="review-action-btn review-action-btn--inspect"
+                          className="admin-rev-btn"
                           onClick={() => setInspectReview(rev)}
-                          title="Inspect Review"
+                          title="Inspect Full Commentary"
                         >
                           <Eye size={14} />
                         </button>
 
                         {rev.status !== 'APPROVED' && (
                           <button
-                            className="review-action-btn review-action-btn--approve"
+                            className="admin-rev-btn admin-rev-btn--approve"
                             onClick={() => handleStatusUpdate(rev.id, 'APPROVED')}
                             disabled={actionLoadingId === rev.id}
-                            title="Approve &amp; Publish"
+                            title="Approve & Publish to Store"
                           >
                             <CheckCircle size={14} />
                           </button>
@@ -301,7 +305,7 @@ export default function AdminReviewListPage() {
 
                         {rev.status !== 'REJECTED' && (
                           <button
-                            className="review-action-btn review-action-btn--reject"
+                            className="admin-rev-btn admin-rev-btn--reject"
                             onClick={() => handleStatusUpdate(rev.id, 'REJECTED')}
                             disabled={actionLoadingId === rev.id}
                             title="Reject Review"
@@ -311,7 +315,7 @@ export default function AdminReviewListPage() {
                         )}
 
                         <button
-                          className="review-action-btn review-action-btn--delete"
+                          className="admin-rev-btn admin-rev-btn--delete"
                           onClick={() => setDeleteTarget(rev)}
                           title="Delete Review"
                         >
@@ -335,60 +339,34 @@ export default function AdminReviewListPage() {
           title={`Review Details: ${inspectReview.id}`}
           size="md"
         >
-          <div className="review-inspect-modal">
-            <div className="review-inspect-modal__top">
+          <div className="admin-rev-modal">
+            <div className="admin-rev-modal__header">
               <div>
-                <span className="review-id-tag">{inspectReview.id}</span>
-                <h3 className="review-inspect-modal__title">{inspectReview.title}</h3>
-                <span className="review-inspect-modal__cat">{inspectReview.productCategory}</span>
+                <h3 className="admin-rev-modal__name">{inspectReview.customerName}</h3>
+                <span className="admin-rev-modal__cat">{inspectReview.productCategory}</span>
               </div>
               <Badge variant={getStatusBadgeVariant(inspectReview.status)}>
                 {inspectReview.status}
               </Badge>
             </div>
 
-            <div className="review-inspect-modal__stars">
-              {[...Array(5)].map((_, i) => (
+            <div className="admin-rev-modal__stars">
+              {[1, 2, 3, 4, 5].map((star) => (
                 <Star
-                  key={i}
+                  key={star}
                   size={18}
-                  className={i < inspectReview.rating ? 'gold-star-active' : 'star-inactive'}
+                  className={star <= inspectReview.rating ? 'star-filled' : 'star-empty'}
                 />
               ))}
-              <span className="review-inspect-modal__rating-text">
-                ({inspectReview.rating} out of 5 stars)
-              </span>
+              <span className="admin-rev-modal__rating-num">{inspectReview.rating} out of 5 Stars</span>
             </div>
 
-            <div className="review-inspect-modal__comment-box">
-              <span className="review-inspect-modal__label">Customer Commentary</span>
-              <p className="review-inspect-modal__comment-text">{inspectReview.comment}</p>
+            <div className="admin-rev-modal__body">
+              <h4 className="admin-rev-modal__heading">"{inspectReview.title}"</h4>
+              <p className="admin-rev-modal__quote">{inspectReview.comment}</p>
             </div>
 
-            <div className="review-inspect-modal__grid">
-              <div>
-                <span className="review-inspect-modal__label">Author</span>
-                <span className="review-inspect-modal__val">{inspectReview.customerName}</span>
-              </div>
-              <div>
-                <span className="review-inspect-modal__label">Email</span>
-                <span className="review-inspect-modal__val">{inspectReview.customerEmail || 'Not provided'}</span>
-              </div>
-              <div>
-                <span className="review-inspect-modal__label">Purchase Verified</span>
-                <span className="review-inspect-modal__val">
-                  {inspectReview.verifiedBuyer ? 'Yes (Verified Buyer)' : 'No'}
-                </span>
-              </div>
-              <div>
-                <span className="review-inspect-modal__label">Submission Date</span>
-                <span className="review-inspect-modal__val">
-                  {new Date(inspectReview.createdAt).toLocaleString()}
-                </span>
-              </div>
-            </div>
-
-            <div className="review-inspect-modal__actions">
+            <div className="admin-rev-modal__actions">
               {inspectReview.status !== 'APPROVED' && (
                 <Button
                   variant="primary"
@@ -398,27 +376,27 @@ export default function AdminReviewListPage() {
                     setInspectReview(null);
                   }}
                 >
-                  Approve Review
+                  Approve &amp; Publish
                 </Button>
               )}
               {inspectReview.status !== 'REJECTED' && (
                 <Button
-                  variant="danger"
+                  variant="secondary"
                   size="md"
                   onClick={() => {
                     handleStatusUpdate(inspectReview.id, 'REJECTED');
                     setInspectReview(null);
                   }}
                 >
-                  Reject Review
+                  Reject
                 </Button>
               )}
               <Button
-                variant="secondary"
+                variant="outline"
                 size="md"
                 onClick={() => setInspectReview(null)}
               >
-                Dismiss
+                Close
               </Button>
             </div>
           </div>
@@ -430,10 +408,10 @@ export default function AdminReviewListPage() {
         isOpen={Boolean(deleteTarget)}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleConfirmDelete}
-        title="Delete Customer Review"
-        message={`Are you sure you want to permanently delete review ${deleteTarget?.id} submitted by ${deleteTarget?.customerName}?`}
-        confirmText="Delete"
-        cancelText="Cancel"
+        title="Delete Customer Review?"
+        message={`Are you sure you want to delete review "${deleteTarget?.title}" by ${deleteTarget?.customerName}? This cannot be undone.`}
+        confirmLabel="Delete Review"
+        cancelLabel="Keep Review"
         variant="danger"
       />
     </div>

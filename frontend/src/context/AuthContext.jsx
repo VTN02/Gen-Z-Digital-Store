@@ -1,30 +1,50 @@
-import { createContext, useContext, useState, useCallback } from 'react';
-import { validateAdminKey, adminLogout } from '../epics/ep04-administration/services/auth.service';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { validateAdminKey, adminLogout, getAdminSession } from '../epics/ep04-administration/services/auth.service';
+
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return sessionStorage.getItem('genz_admin_auth') === 'true';
+    return Boolean(localStorage.getItem('admin_token'));
   });
-  const [admin, setAdmin] = useState(() => {
-    try {
-      const saved = sessionStorage.getItem('genz_admin_user');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  });
+  const [admin, setAdmin] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [initializing, setInitializing] = useState(true);
+
+  // Check existing session on mount
+  useEffect(() => {
+    const checkSession = async () => {
+      const token = localStorage.getItem('admin_token');
+      if (token) {
+        try {
+          const data = await getAdminSession();
+          if (data?.admin) {
+            setIsAuthenticated(true);
+            setAdmin(data.admin);
+          }
+        } catch {
+          // Token invalid or expired
+          localStorage.removeItem('admin_token');
+          setIsAuthenticated(false);
+          setAdmin(null);
+        }
+      }
+      setInitializing(false);
+    };
+
+    checkSession();
+  }, []);
 
   const login = useCallback(async (key) => {
     setLoading(true);
     try {
       const data = await validateAdminKey(key);
+      if (data.token) {
+        localStorage.setItem('admin_token', data.token);
+      }
       setIsAuthenticated(true);
       setAdmin(data.admin || { role: 'admin' });
-      sessionStorage.setItem('genz_admin_auth', 'true');
-      sessionStorage.setItem('genz_admin_user', JSON.stringify(data.admin || { role: 'admin' }));
       return { success: true };
     } catch (err) {
       const message =
@@ -41,15 +61,14 @@ export function AuthProvider({ children }) {
     } catch {
       // Swallow logout errors
     } finally {
+      localStorage.removeItem('admin_token');
       setIsAuthenticated(false);
       setAdmin(null);
-      sessionStorage.removeItem('genz_admin_auth');
-      sessionStorage.removeItem('genz_admin_user');
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, admin, loading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, admin, loading, initializing, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

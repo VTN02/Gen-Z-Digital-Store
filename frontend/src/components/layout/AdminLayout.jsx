@@ -13,14 +13,15 @@ import {
   Menu,
   X,
   Clock,
-  CircleCheck
+  CircleCheck,
+  Boxes
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import ToastContainer from '../common/Toast';
 import './AdminLayout.css';
 
 export default function AdminLayout() {
-  const { isAuthenticated, logout, admin } = useAuth();
+  const { isAuthenticated, logout, admin, initializing } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -48,6 +49,11 @@ export default function AdminLayout() {
   useEffect(() => {
     setSidebarOpen(false);
   }, [location.pathname]);
+
+  // While initializing session from token, avoid premature redirect
+  if (initializing) {
+    return null;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/admin/login" replace state={{ from: location }} />;
@@ -109,13 +115,23 @@ export default function AdminLayout() {
           </NavLink>
 
           <NavLink
-            to="/admin/deliveries"
+            to="/admin/inventory"
             className={({ isActive }) =>
               `admin-sidebar__link ${isActive ? 'admin-sidebar__link--active' : ''}`
             }
           >
-            <Truck size={18} />
-            <span>Deliveries &amp; Tracking</span>
+            <Boxes size={18} />
+            <span>Inventory &amp; Stock</span>
+          </NavLink>
+
+          <NavLink
+            to="/admin/reviews"
+            className={({ isActive }) =>
+              `admin-sidebar__link ${isActive ? 'admin-sidebar__link--active' : ''}`
+            }
+          >
+            <Star size={18} />
+            <span>Customer Reviews</span>
           </NavLink>
 
           <NavLink
@@ -129,13 +145,13 @@ export default function AdminLayout() {
           </NavLink>
 
           <NavLink
-            to="/admin/reviews"
+            to="/admin/deliveries"
             className={({ isActive }) =>
               `admin-sidebar__link ${isActive ? 'admin-sidebar__link--active' : ''}`
             }
           >
-            <Star size={18} />
-            <span>Customer Reviews</span>
+            <Truck size={18} />
+            <span>Deliveries &amp; Tracking</span>
           </NavLink>
 
           <div className="admin-sidebar__group-label">Store Settings</div>
@@ -210,7 +226,7 @@ export default function AdminLayout() {
             <button
               onClick={handleLogout}
               className="admin-header__quick-logout"
-              title="End Session &amp; Logout"
+              title="End Session & Logout"
             >
               <LogOut size={16} />
               <span className="admin-header__logout-label">Logout</span>

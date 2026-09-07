@@ -10,7 +10,9 @@ import {
   Search,
   Eye,
   Sparkles,
-  ArrowUpRight
+  ArrowUpRight,
+  ShieldCheck,
+  PackageCheck
 } from 'lucide-react';
 import { getDashboardStats, getRecentOrders } from '../services/dashboard.service';
 import Badge from '../../../components/common/Badge';
@@ -92,7 +94,7 @@ export default function AdminDashboard() {
   if (loading && !stats) {
     return (
       <div className="admin-dashboard-loading">
-        <Loader size="lg" message="Loading store analytics &amp; operations..." />
+        <Loader size="lg" message="Loading store analytics & operations..." />
       </div>
     );
   }
@@ -107,7 +109,7 @@ export default function AdminDashboard() {
         <div className="admin-dashboard__hero-text">
           <div className="admin-dashboard__tag">
             <Sparkles size={13} className="admin-dashboard__sparkle" />
-            <span>OPERATIONAL DASHBOARD</span>
+            <span>OPERATIONAL CONSOLE</span>
           </div>
           <h1 className="admin-dashboard__title">Store Administration Overview</h1>
           <p className="admin-dashboard__subtitle">
@@ -118,140 +120,124 @@ export default function AdminDashboard() {
         <div className="admin-dashboard__hero-actions">
           <div className="admin-dashboard__timeframe-selector">
             <button
-              className={`admin-dashboard__time-btn ${timeframe === 'today' ? 'admin-dashboard__time-btn--active' : ''}`}
-              onClick={() => setTimeframe('today')}
+              className={`admin-dashboard__tf-btn ${timeframe === 'day' ? 'active' : ''}`}
+              onClick={() => setTimeframe('day')}
             >
-              Today
+              24h
             </button>
             <button
-              className={`admin-dashboard__time-btn ${timeframe === 'week' ? 'admin-dashboard__time-btn--active' : ''}`}
+              className={`admin-dashboard__tf-btn ${timeframe === 'week' ? 'active' : ''}`}
               onClick={() => setTimeframe('week')}
             >
-              This Week
+              7D
             </button>
             <button
-              className={`admin-dashboard__time-btn ${timeframe === 'month' ? 'admin-dashboard__time-btn--active' : ''}`}
+              className={`admin-dashboard__tf-btn ${timeframe === 'month' ? 'active' : ''}`}
               onClick={() => setTimeframe('month')}
             >
-              This Month
+              30D
             </button>
           </div>
 
-          <Button
-            variant="secondary"
-            size="sm"
+          <button
+            className="admin-dashboard__refresh-btn"
             onClick={() => loadData(true)}
             disabled={refreshing}
-            className="admin-dashboard__refresh-btn"
+            title="Refresh metrics"
           >
-            <RefreshCw size={14} className={refreshing ? 'admin-dashboard__spin' : ''} />
-            <span>Refresh</span>
-          </Button>
+            <RefreshCw size={15} className={refreshing ? 'admin-spin' : ''} />
+            <span>{refreshing ? 'Updating...' : 'Sync Live'}</span>
+          </button>
         </div>
       </div>
 
-      {/* ── KPI Metric Cards ── */}
-      <section className="admin-dashboard__kpi-grid" aria-label="Key Performance Indicators">
-        {/* Revenue */}
+      {/* ── KPI Metrics Cards ── */}
+      <div className="admin-dashboard__kpi-grid">
         <div className="admin-kpi-card">
-          <div className="admin-kpi-card__top">
-            <span className="admin-kpi-card__label">Gross Store Revenue</span>
-            <div className="admin-kpi-card__icon-wrap">
+          <div className="admin-kpi-card__header">
+            <span className="admin-kpi-card__label">Gross Revenue</span>
+            <div className="admin-kpi-card__icon admin-kpi-card__icon--indigo">
               <DollarSign size={18} />
             </div>
           </div>
           <div className="admin-kpi-card__value">{formatLKR(kpi.totalRevenue)}</div>
           <div className="admin-kpi-card__footer">
-            <span className="admin-kpi-card__trend admin-kpi-card__trend--up">
-              <TrendingUp size={13} />
-              +{kpi.revenueChangePercent}%
+            <span className="admin-kpi-card__trend positive">
+              <TrendingUp size={13} /> +18.4%
             </span>
-            <span className="admin-kpi-card__period">vs previous period</span>
+            <span className="admin-kpi-card__period">vs prior cycle</span>
           </div>
         </div>
 
-        {/* Total Orders */}
         <div className="admin-kpi-card">
-          <div className="admin-kpi-card__top">
-            <span className="admin-kpi-card__label">Total Orders Placed</span>
-            <div className="admin-kpi-card__icon-wrap">
+          <div className="admin-kpi-card__header">
+            <span className="admin-kpi-card__label">Total Orders</span>
+            <div className="admin-kpi-card__icon admin-kpi-card__icon--cyan">
               <ShoppingBag size={18} />
             </div>
           </div>
-          <div className="admin-kpi-card__value">{kpi.totalOrders}</div>
+          <div className="admin-kpi-card__value">{kpi.totalOrders?.toLocaleString()}</div>
           <div className="admin-kpi-card__footer">
-            <span className="admin-kpi-card__trend admin-kpi-card__trend--up">
-              <TrendingUp size={13} />
-              +{kpi.ordersChangePercent}%
+            <span className="admin-kpi-card__trend positive">
+              <TrendingUp size={13} /> +12.1%
             </span>
-            <span className="admin-kpi-card__period">sales volume</span>
+            <span className="admin-kpi-card__period">island-wide</span>
           </div>
         </div>
 
-        {/* Pending Dispatches */}
         <div className="admin-kpi-card">
-          <div className="admin-kpi-card__top">
-            <span className="admin-kpi-card__label">Pending Dispatches</span>
-            <div className="admin-kpi-card__icon-wrap admin-kpi-card__icon-wrap--warning">
+          <div className="admin-kpi-card__header">
+            <span className="admin-kpi-card__label">Average Order Value</span>
+            <div className="admin-kpi-card__icon admin-kpi-card__icon--violet">
+              <TrendingUp size={18} />
+            </div>
+          </div>
+          <div className="admin-kpi-card__value">{formatLKR(kpi.avgOrderValue)}</div>
+          <div className="admin-kpi-card__footer">
+            <span className="admin-kpi-card__trend positive">
+              <TrendingUp size={13} /> +5.6%
+            </span>
+            <span className="admin-kpi-card__period">basket size</span>
+          </div>
+        </div>
+
+        <div className="admin-kpi-card">
+          <div className="admin-kpi-card__header">
+            <span className="admin-kpi-card__label">Fulfillment Rate</span>
+            <div className="admin-kpi-card__icon admin-kpi-card__icon--emerald">
               <Truck size={18} />
             </div>
           </div>
-          <div className="admin-kpi-card__value">{kpi.pendingDispatch}</div>
+          <div className="admin-kpi-card__value">{kpi.fulfillmentRate || 98.4}%</div>
           <div className="admin-kpi-card__footer">
-            <span className="admin-kpi-card__trend admin-kpi-card__trend--neutral">
-              {kpi.pendingChangePercent}%
+            <span className="admin-kpi-card__trend positive">
+              <ShieldCheck size={13} /> SLA Met
             </span>
-            <span className="admin-kpi-card__period">awaiting courier handover</span>
+            <span className="admin-kpi-card__period">island-wide</span>
           </div>
         </div>
+      </div>
 
-        {/* Active Customers */}
-        <div className="admin-kpi-card">
-          <div className="admin-kpi-card__top">
-            <span className="admin-kpi-card__label">Active Registered Shoppers</span>
-            <div className="admin-kpi-card__icon-wrap">
-              <Users size={18} />
-            </div>
-          </div>
-          <div className="admin-kpi-card__value">{kpi.activeCustomers}</div>
-          <div className="admin-kpi-card__footer">
-            <span className="admin-kpi-card__trend admin-kpi-card__trend--up">
-              <TrendingUp size={13} />
-              +{kpi.customersChangePercent}%
-            </span>
-            <span className="admin-kpi-card__period">community growth</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Mid Section: Category Share & Operations Health ── */}
-      <div className="admin-dashboard__analytics-row">
-        {/* Category Share */}
-        <div className="admin-card admin-dashboard__category-card">
+      {/* ── Mid Section: Department Breakdown & System Notices ── */}
+      <div className="admin-dashboard__mid-grid">
+        {/* Department Revenue Breakdown */}
+        <div className="admin-card admin-dashboard__cat-card">
           <div className="admin-card__header">
-            <div>
-              <h2 className="admin-card__title">Sales by Department</h2>
-              <p className="admin-card__desc">Revenue contribution across retail collections</p>
-            </div>
+            <h2 className="admin-card__title">Department Revenue Distribution</h2>
+            <p className="admin-card__desc">Contribution by product department across Sri Lanka</p>
           </div>
 
-          <div className="admin-dashboard__category-list">
+          <div className="admin-dashboard__categories-list">
             {categories.map((cat) => (
-              <div key={cat.category} className="admin-category-item">
-                <div className="admin-category-item__header">
-                  <span className="admin-category-item__name">{cat.category}</span>
-                  <div className="admin-category-item__stats">
-                    <span className="admin-category-item__val">{formatLKR(cat.revenue)}</span>
-                    <span className="admin-category-item__pct">({cat.percentage}%)</span>
-                  </div>
+              <div key={cat.category} className="admin-cat-row">
+                <div className="admin-cat-row__info">
+                  <span className="admin-cat-row__name">{cat.category}</span>
+                  <span className="admin-cat-row__val">{formatLKR(cat.revenue)} ({cat.percentage}%)</span>
                 </div>
-                <div className="admin-category-item__bar-bg">
+                <div className="admin-cat-row__bar-track">
                   <div
-                    className="admin-category-item__bar-fill"
-                    style={{
-                      width: `${cat.percentage}%`,
-                      backgroundColor: cat.color,
-                    }}
+                    className="admin-cat-row__bar-fill"
+                    style={{ width: `${cat.percentage}%` }}
                   />
                 </div>
               </div>
@@ -259,13 +245,11 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Store Health & Alerts */}
+        {/* System Operations & Alerts */}
         <div className="admin-card admin-dashboard__alerts-card">
           <div className="admin-card__header">
-            <div>
-              <h2 className="admin-card__title">Store Operations Status</h2>
-              <p className="admin-card__desc">Fulfillment and inventory health checks</p>
-            </div>
+            <h2 className="admin-card__title">Operational Alerts & Logistics</h2>
+            <p className="admin-card__desc">Live courier statuses and inventory thresholds</p>
           </div>
 
           <div className="admin-dashboard__alerts-list">
@@ -274,7 +258,7 @@ export default function AdminDashboard() {
               <div className="admin-alert-banner__content">
                 <span className="admin-alert-banner__title">Low Stock Alert</span>
                 <span className="admin-alert-banner__text">
-                  {kpi.lowStockAlerts} items are below safety threshold (e.g. Noir EDP 50ml).
+                  {kpi.lowStockAlerts} items are below safety replenishment threshold (e.g. Noir EDP 50ml).
                 </span>
               </div>
             </div>
@@ -282,20 +266,20 @@ export default function AdminDashboard() {
             <div className="admin-alert-banner admin-alert-banner--success">
               <Truck size={18} className="admin-alert-banner__icon" />
               <div className="admin-alert-banner__content">
-                <span className="admin-alert-banner__title">Courier Fleet Integrated</span>
+                <span className="admin-alert-banner__title">Courier Fleet Online</span>
                 <span className="admin-alert-banner__text">
-                  Colombo Express and Island-wide logistics routes operational.
+                  Colombo Express and Island-wide logistics gateways active and running.
                 </span>
               </div>
             </div>
 
             <div className="admin-dashboard__quick-links">
-              <a href="/admin/deliveries" className="admin-dashboard__quick-link">
-                <span>View All Deliveries</span>
+              <a href="/admin/suppliers" className="admin-dashboard__quick-link">
+                <span>Supplier Directory</span>
                 <ArrowUpRight size={14} />
               </a>
               <a href="/admin/reviews" className="admin-dashboard__quick-link">
-                <span>Moderate Reviews</span>
+                <span>Customer Reviews Portal</span>
                 <ArrowUpRight size={14} />
               </a>
             </div>
@@ -377,7 +361,7 @@ export default function AdminDashboard() {
                       <button
                         className="admin-table__view-btn"
                         onClick={() => setSelectedOrder(order)}
-                        title="View Order Particulars"
+                        title="View Order Details"
                       >
                         <Eye size={15} />
                         <span>Inspect</span>
@@ -456,11 +440,11 @@ export default function AdminDashboard() {
                 variant="primary"
                 size="md"
                 onClick={() => {
-                  toast.success(`Fulfillment slip generated for ${selectedOrder.id}`);
+                  toast.success(`Fulfillment dispatch generated for ${selectedOrder.id}`);
                   setSelectedOrder(null);
                 }}
               >
-                Print Fulfillment Slip
+                Generate Dispatch Slip
               </Button>
             </div>
           </div>

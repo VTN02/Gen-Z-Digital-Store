@@ -15,7 +15,8 @@ import {
   AlertCircle,
   Sparkles,
   Layers,
-  Filter
+  Filter,
+  Check
 } from 'lucide-react';
 import {
   getSuppliers,
@@ -84,7 +85,7 @@ export default function SupplierListPage() {
         category: selectedCategory,
         status: selectedStatus,
       });
-      setSuppliers(data);
+      setSuppliers(data || []);
     } catch (err) {
       console.error(err);
       toast.error('Failed to load supplier directory.');
@@ -107,11 +108,11 @@ export default function SupplierListPage() {
       case 'INACTIVE':
         return 'neutral';
       default:
-        return 'info';
+        return 'neutral';
     }
   };
 
-  const handleOpenAdd = () => {
+  const handleOpenCreate = () => {
     setIsEditing(false);
     setFormData(INITIAL_FORM);
     setFormErrors({});
@@ -140,21 +141,16 @@ export default function SupplierListPage() {
   };
 
   const validateForm = () => {
-    const errs = {};
-    if (!formData.companyName.trim()) {
-      errs.companyName = 'Company name is required.';
-    }
-    if (!formData.contactPerson.trim()) {
-      errs.contactPerson = 'Contact person is required.';
-    }
-    if (!formData.phone.trim()) {
-      errs.phone = 'Phone number is required.';
-    }
-    setFormErrors(errs);
-    return Object.keys(errs).length === 0;
+    const errors = {};
+    if (!formData.companyName.trim()) errors.companyName = 'Company name is required.';
+    if (!formData.contactPerson.trim()) errors.contactPerson = 'Contact person is required.';
+    if (!formData.email.trim()) errors.email = 'Email address is required.';
+    if (!formData.phone.trim()) errors.phone = 'Phone number is required.';
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -162,58 +158,56 @@ export default function SupplierListPage() {
     try {
       if (isEditing) {
         await updateSupplier(formData.id, formData);
-        toast.success(`Supplier ${formData.companyName} updated successfully.`);
+        toast.success(`Supplier "${formData.companyName}" updated.`);
       } else {
         await createSupplier(formData);
-        toast.success(`Supplier ${formData.companyName} added to directory.`);
+        toast.success(`Supplier "${formData.companyName}" enrolled.`);
       }
       setModalOpen(false);
       fetchList();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Operation failed.');
+      console.error(err);
+      toast.error(err.response?.data?.message || 'Operation failed. Please verify fields.');
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleConfirmDelete = async () => {
+  const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
       await deleteSupplier(deleteTarget.id);
-      toast.success(`Supplier ${deleteTarget.companyName} removed.`);
+      toast.success(`Supplier "${deleteTarget.companyName}" removed.`);
       setDeleteTarget(null);
       fetchList();
     } catch (err) {
-      toast.error('Failed to delete supplier.');
+      console.error(err);
+      toast.error('Failed to remove supplier.');
     } finally {
       setDeleting(false);
     }
   };
 
-  // Metrics calculation
+  // KPI Calculations
   const totalCount = suppliers.length;
   const activeCount = suppliers.filter((s) => s.status === 'ACTIVE').length;
-  const avgLeadTime =
-    suppliers.length > 0
-      ? (
-          suppliers.reduce((acc, curr) => acc + (curr.leadTimeDays || 0), 0) /
-          suppliers.length
-        ).toFixed(1)
-      : '0';
+  const avgLeadTime = totalCount
+    ? Math.round(suppliers.reduce((acc, s) => acc + (Number(s.leadTimeDays) || 0), 0) / totalCount)
+    : 0;
 
   return (
     <div className="supplier-page">
-      {/* ── Header Banner ── */}
+      {/* ── Hero Banner ── */}
       <div className="supplier-hero">
         <div className="supplier-hero__text">
           <div className="supplier-hero__tag">
-            <Sparkles size={13} />
-            <span>VENDOR RELATIONSHIPS</span>
+            <Sparkles size={13} className="supplier-hero__sparkle" />
+            <span>EP-04 &middot; SOURCING &amp; VENDOR MANAGEMENT</span>
           </div>
-          <h1 className="supplier-hero__title">Supplier Directory &amp; Sourcing</h1>
+          <h1 className="supplier-hero__title">Supplier &amp; Procurement Directory</h1>
           <p className="supplier-hero__subtitle">
-            Manage fabric manufacturers, fragrance distillers, packaging vendors, and trading partners.
+            Manage fabric mills, fragrance distillers, packaging houses, and logistics partners across Sri Lanka.
           </p>
         </div>
 
@@ -221,125 +215,125 @@ export default function SupplierListPage() {
           <Button
             variant="primary"
             size="md"
-            onClick={handleOpenAdd}
+            onClick={handleOpenCreate}
             className="supplier-add-btn"
           >
             <Plus size={16} />
-            <span>Add New Supplier</span>
+            <span>Enroll New Supplier</span>
           </Button>
         </div>
       </div>
 
-      {/* ── KPI Metric Highlights ── */}
-      <section className="supplier-kpis" aria-label="Supplier Key Metrics">
+      {/* ── KPI Summary Cards ── */}
+      <div className="supplier-kpis">
         <div className="supplier-kpi-card">
           <div className="supplier-kpi-card__top">
-            <span className="supplier-kpi-card__label">Total Registered Partners</span>
-            <div className="supplier-kpi-card__icon-wrap">
+            <span className="supplier-kpi-card__label">Total Directory</span>
+            <div className="supplier-kpi-card__icon supplier-kpi-card__icon--indigo">
               <Building2 size={18} />
             </div>
           </div>
           <div className="supplier-kpi-card__val">{totalCount}</div>
-          <span className="supplier-kpi-card__sub">Across Sri Lanka &amp; Overseas</span>
+          <span className="supplier-kpi-card__sub">Registered partners</span>
         </div>
 
         <div className="supplier-kpi-card">
           <div className="supplier-kpi-card__top">
             <span className="supplier-kpi-card__label">Active Suppliers</span>
-            <div className="supplier-kpi-card__icon-wrap supplier-kpi-card__icon-wrap--success">
+            <div className="supplier-kpi-card__icon supplier-kpi-card__icon--cyan">
               <CheckCircle size={18} />
             </div>
           </div>
           <div className="supplier-kpi-card__val">{activeCount}</div>
-          <span className="supplier-kpi-card__sub">Supplying ongoing stock</span>
+          <span className="supplier-kpi-card__sub">Fulfilling orders</span>
         </div>
 
         <div className="supplier-kpi-card">
           <div className="supplier-kpi-card__top">
-            <span className="supplier-kpi-card__label">Avg. Lead Time</span>
-            <div className="supplier-kpi-card__icon-wrap">
+            <span className="supplier-kpi-card__label">Average Lead Time</span>
+            <div className="supplier-kpi-card__icon supplier-kpi-card__icon--violet">
               <Clock size={18} />
             </div>
           </div>
           <div className="supplier-kpi-card__val">{avgLeadTime} Days</div>
-          <span className="supplier-kpi-card__sub">From order confirmation</span>
+          <span className="supplier-kpi-card__sub">Dispatch SLA standard</span>
         </div>
 
         <div className="supplier-kpi-card">
           <div className="supplier-kpi-card__top">
-            <span className="supplier-kpi-card__label">Primary Hubs</span>
-            <div className="supplier-kpi-card__icon-wrap">
-              <MapPin size={18} />
+            <span className="supplier-kpi-card__label">Sourcing Domains</span>
+            <div className="supplier-kpi-card__icon supplier-kpi-card__icon--emerald">
+              <Layers size={18} />
             </div>
           </div>
-          <div className="supplier-kpi-card__val">Colombo &amp; Kandy</div>
-          <span className="supplier-kpi-card__sub">Local export processing zones</span>
+          <div className="supplier-kpi-card__val">{CATEGORIES.length - 1}</div>
+          <span className="supplier-kpi-card__sub">Apparel, oils, packs</span>
         </div>
-      </section>
+      </div>
 
       {/* ── Search & Filter Controls ── */}
-      <div className="supplier-filters-bar">
-        <div className="supplier-search-input-wrap">
-          <Search size={15} className="supplier-search-icon" />
+      <div className="supplier-controls">
+        <div className="supplier-search-wrap">
+          <Search size={16} className="supplier-search-icon" />
           <input
             type="text"
             className="supplier-search-input"
-            placeholder="Search company, contact person, city, or ID..."
+            placeholder="Search suppliers by name, contact, city, code..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
-        <div className="supplier-filter-group">
-          <div className="supplier-select-wrap">
-            <Filter size={13} className="supplier-select-icon" />
-            <select
-              className="supplier-select"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              aria-label="Filter by Category"
+        <div className="supplier-filter-chips">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              className={`supplier-chip ${selectedCategory === cat ? 'supplier-chip--active' : ''}`}
+              onClick={() => setSelectedCategory(cat)}
             >
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {c === 'ALL' ? 'All Categories' : c}
-                </option>
-              ))}
-            </select>
-          </div>
+              {cat === 'ALL' ? 'All Domains' : cat}
+            </button>
+          ))}
+        </div>
 
-          <div className="supplier-select-wrap">
-            <Layers size={13} className="supplier-select-icon" />
-            <select
-              className="supplier-select"
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              aria-label="Filter by Status"
-            >
-              {STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s === 'ALL' ? 'All Statuses' : s}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="supplier-status-filter">
+          <Filter size={14} className="supplier-status-icon" />
+          <select
+            className="supplier-status-select"
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+          >
+            <option value="ALL">All Statuses</option>
+            <option value="ACTIVE">Active Only</option>
+            <option value="ON_HOLD">On Hold</option>
+            <option value="INACTIVE">Inactive</option>
+          </select>
         </div>
       </div>
 
-      {/* ── Table / Content ── */}
-      <div className="supplier-card">
+      {/* ── Supplier Table ── */}
+      <div className="supplier-table-card">
         {loading ? (
-          <div className="supplier-loading-wrap">
-            <Loader size="lg" message="Loading vendor directory..." />
+          <div className="supplier-table-loading">
+            <Loader size="md" message="Accessing supplier records..." />
           </div>
         ) : suppliers.length === 0 ? (
-          <div className="supplier-empty-state">
-            <AlertCircle size={36} className="supplier-empty-icon" />
-            <h3 className="supplier-empty-title">No suppliers found</h3>
-            <p className="supplier-empty-text">
-              Try adjusting your search criteria or add a new supplier profile.
+          <div className="supplier-empty">
+            <AlertCircle size={40} className="supplier-empty-icon" />
+            <h3 className="supplier-empty-title">No Suppliers Found</h3>
+            <p className="supplier-empty-desc">
+              No matching partners found under the current search and category criteria.
             </p>
-            <Button variant="secondary" size="sm" onClick={handleOpenAdd}>
-              Add First Supplier
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSearch('');
+                setSelectedCategory('ALL');
+                setSelectedStatus('ALL');
+              }}
+            >
+              Reset Filters
             </Button>
           </div>
         ) : (
@@ -347,10 +341,10 @@ export default function SupplierListPage() {
             <table className="supplier-table">
               <thead>
                 <tr>
-                  <th>Vendor ID</th>
-                  <th>Company &amp; Contact</th>
-                  <th>Sourcing Category</th>
-                  <th>Location</th>
+                  <th>Vendor Identifier</th>
+                  <th>Company &amp; Domain</th>
+                  <th>Primary Liaison</th>
+                  <th>Contact Details</th>
                   <th>Terms &amp; Lead Time</th>
                   <th>Status</th>
                   <th>Actions</th>
@@ -360,58 +354,69 @@ export default function SupplierListPage() {
                 {suppliers.map((sup) => (
                   <tr key={sup.id} className="supplier-table__row">
                     <td>
-                      <span className="supplier-id-tag">{sup.id}</span>
+                      <span className="supplier-code">{sup.id}</span>
                     </td>
                     <td>
-                      <div className="supplier-cell-company">
-                        <span className="supplier-company-name">{sup.companyName}</span>
-                        <div className="supplier-contact-sub">
-                          <span>{sup.contactPerson}</span>
-                          <span className="supplier-dot">·</span>
-                          <span className="supplier-phone">{sup.phone}</span>
-                        </div>
+                      <div className="supplier-vendor-cell">
+                        <span className="supplier-vendor-name">{sup.companyName}</span>
+                        <span className="supplier-vendor-category">{sup.category}</span>
                       </div>
                     </td>
                     <td>
-                      <span className="supplier-category-pill">{sup.category}</span>
+                      <div className="supplier-liaison-cell">
+                        <span className="supplier-liaison-name">{sup.contactPerson}</span>
+                        <span className="supplier-liaison-city">
+                          <MapPin size={11} />
+                          {sup.city}
+                        </span>
+                      </div>
                     </td>
                     <td>
-                      <div className="supplier-location-cell">
-                        <MapPin size={13} />
-                        <span>{sup.city}</span>
+                      <div className="supplier-contact-cell">
+                        <a href={`mailto:${sup.email}`} className="supplier-contact-link">
+                          <Mail size={12} />
+                          <span>{sup.email}</span>
+                        </a>
+                        <a href={`tel:${sup.phone}`} className="supplier-contact-link">
+                          <Phone size={12} />
+                          <span>{sup.phone}</span>
+                        </a>
                       </div>
                     </td>
                     <td>
                       <div className="supplier-terms-cell">
-                        <span className="supplier-terms-badge">{sup.paymentTerms}</span>
-                        <span className="supplier-lead-time">{sup.leadTimeDays}d lead</span>
+                        <span className="supplier-terms">{sup.paymentTerms}</span>
+                        <span className="supplier-lead-time">
+                          <Clock size={11} />
+                          {sup.leadTimeDays}d SLA
+                        </span>
                       </div>
                     </td>
                     <td>
                       <Badge variant={getStatusVariant(sup.status)}>
-                        {sup.status}
+                        {sup.status.replace('_', ' ')}
                       </Badge>
                     </td>
                     <td>
-                      <div className="supplier-action-buttons">
+                      <div className="supplier-actions-cell">
                         <button
-                          className="supplier-btn-icon"
+                          className="supplier-action-btn"
                           onClick={() => setViewSupplier(sup)}
-                          title="View Vendor Details"
+                          title="View Vendor Particulars"
                         >
                           <Eye size={14} />
                         </button>
                         <button
-                          className="supplier-btn-icon supplier-btn-icon--edit"
+                          className="supplier-action-btn"
                           onClick={() => handleOpenEdit(sup)}
-                          title="Edit Supplier"
+                          title="Edit Profile"
                         >
                           <Edit2 size={14} />
                         </button>
                         <button
-                          className="supplier-btn-icon supplier-btn-icon--delete"
+                          className="supplier-action-btn supplier-action-btn--delete"
                           onClick={() => setDeleteTarget(sup)}
-                          title="Delete Supplier"
+                          title="Remove Supplier"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -425,58 +430,67 @@ export default function SupplierListPage() {
         )}
       </div>
 
-      {/* ── Add / Edit Modal ── */}
+      {/* ── Create / Edit Supplier Modal ── */}
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={isEditing ? `Edit Supplier: ${formData.companyName}` : 'Add New Supplier Profile'}
-        size="md"
+        title={isEditing ? `Modify Supplier: ${formData.id}` : 'Enroll New Supplier Profile'}
+        size="lg"
       >
-        <form onSubmit={handleSubmit} className="supplier-form">
-          <div className="supplier-form__row">
+        <form onSubmit={handleFormSubmit} className="supplier-form">
+          <div className="supplier-form__grid">
             <div className="supplier-form__field">
-              <label className="supplier-form__label">Company Name *</label>
+              <label className="supplier-form__label">
+                Company Legal Name <span className="supplier-required">*</span>
+              </label>
               <input
                 type="text"
                 className={`supplier-form__input ${formErrors.companyName ? 'supplier-form__input--err' : ''}`}
                 value={formData.companyName}
                 onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                placeholder="e.g. Ceylon Fabrics PLC"
+                placeholder="e.g. Ceylon Fine Cottons PLC"
               />
               {formErrors.companyName && (
-                <span className="supplier-form__error-text">{formErrors.companyName}</span>
+                <span className="supplier-form__err-msg">{formErrors.companyName}</span>
               )}
             </div>
 
             <div className="supplier-form__field">
-              <label className="supplier-form__label">Contact Person *</label>
+              <label className="supplier-form__label">
+                Primary Contact Person <span className="supplier-required">*</span>
+              </label>
               <input
                 type="text"
                 className={`supplier-form__input ${formErrors.contactPerson ? 'supplier-form__input--err' : ''}`}
                 value={formData.contactPerson}
                 onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
-                placeholder="e.g. Nuwan Jayasuriya"
+                placeholder="e.g. Ruwan Jayasuriya"
               />
               {formErrors.contactPerson && (
-                <span className="supplier-form__error-text">{formErrors.contactPerson}</span>
+                <span className="supplier-form__err-msg">{formErrors.contactPerson}</span>
               )}
             </div>
-          </div>
 
-          <div className="supplier-form__row">
             <div className="supplier-form__field">
-              <label className="supplier-form__label">Email Address</label>
+              <label className="supplier-form__label">
+                Official Email Address <span className="supplier-required">*</span>
+              </label>
               <input
                 type="email"
-                className="supplier-form__input"
+                className={`supplier-form__input ${formErrors.email ? 'supplier-form__input--err' : ''}`}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="orders@supplier.lk"
+                placeholder="procurement@vendor.lk"
               />
+              {formErrors.email && (
+                <span className="supplier-form__err-msg">{formErrors.email}</span>
+              )}
             </div>
 
             <div className="supplier-form__field">
-              <label className="supplier-form__label">Phone Number *</label>
+              <label className="supplier-form__label">
+                Phone Number <span className="supplier-required">*</span>
+              </label>
               <input
                 type="text"
                 className={`supplier-form__input ${formErrors.phone ? 'supplier-form__input--err' : ''}`}
@@ -485,12 +499,21 @@ export default function SupplierListPage() {
                 placeholder="+94 11 234 5678"
               />
               {formErrors.phone && (
-                <span className="supplier-form__error-text">{formErrors.phone}</span>
+                <span className="supplier-form__err-msg">{formErrors.phone}</span>
               )}
             </div>
-          </div>
 
-          <div className="supplier-form__row">
+            <div className="supplier-form__field">
+              <label className="supplier-form__label">Base City</label>
+              <input
+                type="text"
+                className="supplier-form__input"
+                value={formData.city}
+                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                placeholder="e.g. Colombo 03, Biyagama, Kandy"
+              />
+            </div>
+
             <div className="supplier-form__field">
               <label className="supplier-form__label">Sourcing Category</label>
               <select
@@ -501,7 +524,7 @@ export default function SupplierListPage() {
                 <option value="Men's Fashion">Men's Fashion</option>
                 <option value="Boys' Fashion">Boys' Fashion</option>
                 <option value="Fragrance Oils">Fragrance Oils</option>
-                <option value="Packaging & Boxes">Packaging &amp; Boxes</option>
+                <option value="Packaging & Boxes">Packaging & Boxes</option>
               </select>
             </div>
 
@@ -512,24 +535,11 @@ export default function SupplierListPage() {
                 value={formData.paymentTerms}
                 onChange={(e) => setFormData({ ...formData, paymentTerms: e.target.value })}
               >
-                <option value="Net 30">Net 30</option>
-                <option value="Net 15">Net 15</option>
-                <option value="Cash on Delivery">Cash on Delivery</option>
+                <option value="Net 15">Net 15 Days</option>
+                <option value="Net 30">Net 30 Days</option>
                 <option value="Advance Payment">Advance Payment</option>
+                <option value="Cash on Delivery">Cash on Delivery</option>
               </select>
-            </div>
-          </div>
-
-          <div className="supplier-form__row">
-            <div className="supplier-form__field">
-              <label className="supplier-form__label">City / Region</label>
-              <input
-                type="text"
-                className="supplier-form__input"
-                value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                placeholder="e.g. Colombo, Kandy"
-              />
             </div>
 
             <div className="supplier-form__field">
@@ -543,9 +553,7 @@ export default function SupplierListPage() {
                 onChange={(e) => setFormData({ ...formData, leadTimeDays: e.target.value })}
               />
             </div>
-          </div>
 
-          <div className="supplier-form__row">
             <div className="supplier-form__field">
               <label className="supplier-form__label">Operational Status</label>
               <select
@@ -553,19 +561,19 @@ export default function SupplierListPage() {
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
               >
-                <option value="ACTIVE">Active</option>
-                <option value="ON_HOLD">On Hold</option>
-                <option value="INACTIVE">Inactive</option>
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="ON_HOLD">ON HOLD</option>
+                <option value="INACTIVE">INACTIVE</option>
               </select>
             </div>
 
             <div className="supplier-form__field">
-              <label className="supplier-form__label">Rating (1.0 - 5.0)</label>
+              <label className="supplier-form__label">Supplier Rating (1.0 - 5.0)</label>
               <input
                 type="number"
                 step="0.1"
-                min="1"
-                max="5"
+                min="1.0"
+                max="5.0"
                 className="supplier-form__input"
                 value={formData.rating}
                 onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
@@ -573,138 +581,120 @@ export default function SupplierListPage() {
             </div>
           </div>
 
-          <div className="supplier-form__field">
-            <label className="supplier-form__label">Full Address / Location</label>
+          <div className="supplier-form__field supplier-form__field--full">
+            <label className="supplier-form__label">Registered Physical Address</label>
             <input
               type="text"
               className="supplier-form__input"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              placeholder="e.g. Biyagama EPZ, Phase 2, Sri Lanka"
+              placeholder="Full warehouse or mill address in Sri Lanka"
             />
           </div>
 
-          <div className="supplier-form__field">
-            <label className="supplier-form__label">Supplier Notes &amp; Capabilities</label>
+          <div className="supplier-form__field supplier-form__field--full">
+            <label className="supplier-form__label">Procurement &amp; Quality Notes</label>
             <textarea
               className="supplier-form__textarea"
-              rows={2}
+              rows="3"
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="e.g. Minimum order quantity, material specifications, special packaging options..."
+              placeholder="e.g. Specialized in 60s count linen; requires 10 days notice during festive season drops."
             />
           </div>
 
           <div className="supplier-form__actions">
             <Button
-              type="button"
               variant="secondary"
               size="md"
+              type="button"
               onClick={() => setModalOpen(false)}
             >
               Cancel
             </Button>
             <Button
-              type="submit"
               variant="primary"
               size="md"
+              type="submit"
               loading={submitting}
             >
-              {isEditing ? 'Save Changes' : 'Create Supplier'}
+              {isEditing ? 'Save Changes' : 'Confirm Enrollment'}
             </Button>
           </div>
         </form>
       </Modal>
 
-      {/* ── View Detail Modal ── */}
+      {/* ── View Particulars Modal ── */}
       {viewSupplier && (
         <Modal
           isOpen={Boolean(viewSupplier)}
           onClose={() => setViewSupplier(null)}
-          title={`Supplier Profile: ${viewSupplier.companyName}`}
+          title={`Supplier Profile: ${viewSupplier.id}`}
           size="md"
         >
-          <div className="supplier-detail-view">
-            <div className="supplier-detail-view__header">
+          <div className="supplier-view-card">
+            <div className="supplier-view-header">
               <div>
-                <span className="supplier-id-tag">{viewSupplier.id}</span>
-                <h3 className="supplier-detail-view__company">{viewSupplier.companyName}</h3>
-                <span className="supplier-detail-view__cat">{viewSupplier.category}</span>
+                <h3 className="supplier-view-title">{viewSupplier.companyName}</h3>
+                <span className="supplier-view-cat">{viewSupplier.category}</span>
               </div>
               <Badge variant={getStatusVariant(viewSupplier.status)}>
                 {viewSupplier.status}
               </Badge>
             </div>
 
-            <div className="supplier-detail-view__grid">
-              <div className="supplier-detail-view__item">
-                <span className="supplier-detail-view__label">Contact Person</span>
-                <span className="supplier-detail-view__val">{viewSupplier.contactPerson}</span>
+            <div className="supplier-view-grid">
+              <div>
+                <span className="supplier-view-lbl">Liaison Name</span>
+                <span className="supplier-view-val">{viewSupplier.contactPerson}</span>
               </div>
-
-              <div className="supplier-detail-view__item">
-                <span className="supplier-detail-view__label">Contact Phone</span>
-                <a href={`tel:${viewSupplier.phone}`} className="supplier-detail-view__link">
-                  {viewSupplier.phone}
-                </a>
+              <div>
+                <span className="supplier-view-lbl">Location</span>
+                <span className="supplier-view-val">{viewSupplier.city}</span>
               </div>
-
-              <div className="supplier-detail-view__item">
-                <span className="supplier-detail-view__label">Email</span>
-                <a href={`mailto:${viewSupplier.email}`} className="supplier-detail-view__link">
-                  {viewSupplier.email || 'N/A'}
-                </a>
+              <div>
+                <span className="supplier-view-lbl">Email</span>
+                <span className="supplier-view-val">{viewSupplier.email}</span>
               </div>
-
-              <div className="supplier-detail-view__item">
-                <span className="supplier-detail-view__label">City &amp; Region</span>
-                <span className="supplier-detail-view__val">{viewSupplier.city}</span>
+              <div>
+                <span className="supplier-view-lbl">Phone</span>
+                <span className="supplier-view-val">{viewSupplier.phone}</span>
               </div>
-
-              <div className="supplier-detail-view__item">
-                <span className="supplier-detail-view__label">Payment Terms</span>
-                <span className="supplier-detail-view__val">{viewSupplier.paymentTerms}</span>
+              <div>
+                <span className="supplier-view-lbl">Payment Terms</span>
+                <span className="supplier-view-val">{viewSupplier.paymentTerms}</span>
               </div>
-
-              <div className="supplier-detail-view__item">
-                <span className="supplier-detail-view__label">Fulfillment Lead Time</span>
-                <span className="supplier-detail-view__val">{viewSupplier.leadTimeDays} Days</span>
+              <div>
+                <span className="supplier-view-lbl">Lead Time</span>
+                <span className="supplier-view-val">{viewSupplier.leadTimeDays} business days</span>
               </div>
-
-              <div className="supplier-detail-view__item">
-                <span className="supplier-detail-view__label">Vendor Rating</span>
-                <span className="supplier-detail-view__val">⭐ {viewSupplier.rating} / 5.0</span>
-              </div>
-
-              <div className="supplier-detail-view__item">
-                <span className="supplier-detail-view__label">Registered On</span>
-                <span className="supplier-detail-view__val">
-                  {new Date(viewSupplier.createdAt).toLocaleDateString()}
-                </span>
+              <div>
+                <span className="supplier-view-lbl">Audit Rating</span>
+                <span className="supplier-view-val">{viewSupplier.rating} / 5.0</span>
               </div>
             </div>
 
             {viewSupplier.address && (
-              <div className="supplier-detail-view__notes-box">
-                <span className="supplier-detail-view__label">Physical Address</span>
-                <p className="supplier-detail-view__text">{viewSupplier.address}</p>
+              <div className="supplier-view-section">
+                <span className="supplier-view-lbl">Physical Address</span>
+                <span className="supplier-view-text">{viewSupplier.address}</span>
               </div>
             )}
 
             {viewSupplier.notes && (
-              <div className="supplier-detail-view__notes-box">
-                <span className="supplier-detail-view__label">Notes &amp; Capabilities</span>
-                <p className="supplier-detail-view__text">{viewSupplier.notes}</p>
+              <div className="supplier-view-section">
+                <span className="supplier-view-lbl">Procurement &amp; Quality Notes</span>
+                <span className="supplier-view-text">{viewSupplier.notes}</span>
               </div>
             )}
 
-            <div className="supplier-detail-view__footer">
+            <div className="supplier-view-actions">
               <Button
                 variant="secondary"
                 size="md"
                 onClick={() => setViewSupplier(null)}
               >
-                Close
+                Close Particulars
               </Button>
               <Button
                 variant="primary"
@@ -715,7 +705,7 @@ export default function SupplierListPage() {
                   handleOpenEdit(s);
                 }}
               >
-                Edit Vendor Profile
+                Edit Profile
               </Button>
             </div>
           </div>
@@ -726,11 +716,11 @@ export default function SupplierListPage() {
       <ConfirmDialog
         isOpen={Boolean(deleteTarget)}
         onClose={() => setDeleteTarget(null)}
-        onConfirm={handleConfirmDelete}
-        title="Delete Supplier Profile"
-        message={`Are you sure you want to delete ${deleteTarget?.companyName} (${deleteTarget?.id})? This partner will be removed from your active vendor directory.`}
-        confirmText="Delete Supplier"
-        cancelText="Keep"
+        onConfirm={handleDeleteConfirm}
+        title="Remove Vendor From Directory?"
+        message={`Are you certain you want to permanently delete supplier "${deleteTarget?.companyName}" (${deleteTarget?.id})? This will archive active vendor agreements.`}
+        confirmLabel="Confirm Removal"
+        cancelLabel="Keep Supplier"
         variant="danger"
         loading={deleting}
       />
