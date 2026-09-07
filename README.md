@@ -191,4 +191,5 @@ GENZ-ADMIN-2026
 1. **Executive Dashboard (`/admin/dashboard` - EP-04)**: Live KPI metrics, department revenue distribution, real-time recent order dispatch tracking.
 2. **Review Moderation (`/admin/reviews` - EP-03)**: Approve, reject, or delete customer reviews submitted via the storefront.
 3. **Supplier Directory (`/admin/suppliers` - Procurement)**: Vendor profiles, contact particulars, sourcing categories, payment terms, and partner CRUD operations.
+4. **Inventory & Stock Control (`/admin/inventory` - EP-01)**: Real-time SKU stock levels, safety threshold alerts, quick stock adjustments (restocks, cycle counts, damage write-offs) with presets, audit transaction logs, department & warehouse filtering, sortable tables, margin analytics, and CSV report export.
 

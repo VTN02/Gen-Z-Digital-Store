@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   TrendingUp,
   ShoppingBag,
@@ -12,7 +13,8 @@ import {
   Sparkles,
   ArrowUpRight,
   ShieldCheck,
-  PackageCheck
+  PackageCheck,
+  Boxes
 } from 'lucide-react';
 import { getDashboardStats, getRecentOrders } from '../services/dashboard.service';
 import Badge from '../../../components/common/Badge';
@@ -139,6 +141,15 @@ export default function AdminDashboard() {
             </button>
           </div>
 
+          <Link
+            to="/admin/inventory"
+            className="admin-dashboard__inventory-link"
+            title="Inspect Warehouse Stock & SKUs"
+          >
+            <Boxes size={15} />
+            <span>Stock Control</span>
+          </Link>
+
           <button
             className="admin-dashboard__refresh-btn"
             onClick={() => loadData(true)}
@@ -261,6 +272,9 @@ export default function AdminDashboard() {
                   {kpi.lowStockAlerts} items are below safety replenishment threshold (e.g. Noir EDP 50ml).
                 </span>
               </div>
+              <Link to="/admin/inventory" className="admin-alert-action-link">
+                Restock &rarr;
+              </Link>
             </div>
 
             <div className="admin-alert-banner admin-alert-banner--success">
