@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   Truck,
   Star,
+  Building2,
   Users,
   Settings,
   LogOut,
@@ -115,6 +116,16 @@ export default function AdminLayout() {
           >
             <Truck size={18} />
             <span>Deliveries &amp; Tracking</span>
+          </NavLink>
+
+          <NavLink
+            to="/admin/suppliers"
+            className={({ isActive }) =>
+              `admin-sidebar__link ${isActive ? 'admin-sidebar__link--active' : ''}`
+            }
+          >
+            <Building2 size={18} />
+            <span>Suppliers &amp; Vendors</span>
           </NavLink>
 
           <NavLink

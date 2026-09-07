@@ -4,6 +4,7 @@ import AdminLayout from '../components/layout/AdminLayout';
 import LandingPage from '../pages/landing/LandingPage';
 import AdminLogin from '../epics/ep04-administration/pages/AdminLogin';
 import AdminDashboard from '../epics/ep04-administration/pages/AdminDashboard';
+import SupplierListPage from '../modules/supplier-procurement/pages/SupplierListPage';
 
 /**
  * Application routes.
@@ -37,6 +38,7 @@ export default function AppRoutes() {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
         <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="suppliers" element={<SupplierListPage />} />
         <Route path="deliveries" element={<ComingSoon title="Delivery Management & Tracking (EP-03)" />} />
         <Route path="reviews" element={<ComingSoon title="Review & Feedback Moderation (EP-03)" />} />
         <Route path="staff" element={<ComingSoon title="Staff & Role Management" />} />
