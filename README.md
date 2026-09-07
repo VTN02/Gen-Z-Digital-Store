@@ -173,3 +173,21 @@ genz-digital-storefront/
 ├── README.md
 └── package.json
 ```
+
+---
+
+## Administration Portal & Access Credentials
+
+### Admin Access Key
+```text
+GENZ-ADMIN-2026
+```
+
+### Accessing the Admin Console
+- **Direct Login Route**: `http://localhost:5174/admin/login` (or port `5173`)
+- **Discreet Brand Entry**: Click the **GEN-Z** logo mark in the public footer 3 times to open the access key prompt.
+
+### Admin Features Available:
+1. **Executive Dashboard (`/admin/dashboard`)**: Live KPI metrics, department revenue distribution, real-time recent order dispatch tracking.
+2. **Review Moderation (`/admin/reviews`)**: Approve, reject, or delete customer reviews submitted via the storefront.
+3. **Supplier Directory (`/admin/suppliers`)**: Vendor profiles, contact particulars, sourcing categories, payment terms, and partner CRUD operations.
