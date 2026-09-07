@@ -1,0 +1,14 @@
+{
+  "name": "gen-z-digital-storefront",
+  "version": "1.0.0",
+  "description": "Gen-Z Digital Storefront — Monorepo Root",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix frontend\" \"npm run dev --prefix backend\"",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
