@@ -1,44 +1,91 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Tag } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Sparkles, Flame, Eye } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { getFeaturedProducts } from '../../services/mock/products.mock';
 import { CardSkeleton } from '../../components/common/Loader';
-import Badge from '../../components/common/Badge';
 import './FeaturedProducts.css';
 
 function formatPrice(amount, currency = 'LKR') {
   return `${currency} ${amount.toLocaleString()}`;
 }
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
 function ProductCard({ product }) {
-  const badgeVariantMap = {
-    'Best Seller': 'accent',
-    'New': 'success',
-    'Limited': 'warning',
+  const getBadgeClass = (badge) => {
+    switch (badge) {
+      case 'Best Seller':
+        return 'product-badge--bestseller';
+      case 'New':
+        return 'product-badge--new';
+      case 'Limited':
+        return 'product-badge--limited';
+      default:
+        return 'product-badge--default';
+    }
   };
 
   return (
-    <article className="product-card" aria-label={product.name}>
-      <div className="product-card__image-wrap">
-        <div className="product-card__image-placeholder" aria-hidden="true">
-          <ShoppingBag size={32} strokeWidth={1} />
+    <motion.article
+      className="modern-product-card"
+      variants={cardVariants}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+    >
+      <div className="modern-product-card__media">
+        <div className="modern-product-card__visual">
+          <div className="modern-product-card__mesh-bg" />
+          <ShoppingBag size={38} strokeWidth={1.2} className="modern-product-card__icon" />
+          <span className="modern-product-card__watermark">{product.category}</span>
         </div>
+
         {product.badge && (
-          <div className="product-card__badge">
-            <Badge variant={badgeVariantMap[product.badge] || 'neutral'}>
-              {product.badge}
-            </Badge>
-          </div>
+          <span className={`modern-product-badge ${getBadgeClass(product.badge)}`}>
+            {product.badge === 'Best Seller' && <Flame size={12} />}
+            {product.badge === 'New' && <Sparkles size={12} />}
+            <span>{product.badge}</span>
+          </span>
         )}
+
         {!product.inStock && (
-          <div className="product-card__sold-out">
+          <div className="modern-product-card__soldout">
             <span>Sold Out</span>
           </div>
         )}
-        <div className="product-card__actions" aria-label="Quick actions">
+
+        <div className="modern-product-card__actions">
           <button
-            className="product-card__action-btn"
+            type="button"
+            className="modern-action-btn"
+            aria-label={`Quick view ${product.name}`}
+            title="Quick view"
+          >
+            <Eye size={16} />
+          </button>
+          <button
+            type="button"
+            className="modern-action-btn modern-action-btn--primary"
             aria-label={`Add ${product.name} to cart`}
+            title="Add to cart"
             disabled={!product.inStock}
           >
             <ShoppingBag size={16} />
@@ -46,21 +93,27 @@ function ProductCard({ product }) {
         </div>
       </div>
 
-      <div className="product-card__info">
-        <p className="product-card__category">{product.category}</p>
-        <h3 className="product-card__name">{product.name}</h3>
-        <div className="product-card__pricing">
-          <span className="product-card__price">
-            {formatPrice(product.price, product.currency)}
-          </span>
-          {product.originalPrice && (
-            <span className="product-card__original-price">
-              {formatPrice(product.originalPrice, product.currency)}
+      <div className="modern-product-card__body">
+        <span className="modern-product-card__category">{product.category}</span>
+        <h3 className="modern-product-card__title">{product.name}</h3>
+
+        <div className="modern-product-card__footer">
+          <div className="modern-product-card__pricing">
+            <span className="modern-product-card__price">
+              {formatPrice(product.price, product.currency)}
             </span>
-          )}
+            {product.originalPrice && (
+              <span className="modern-product-card__compare-price">
+                {formatPrice(product.originalPrice, product.currency)}
+              </span>
+            )}
+          </div>
+          <span className="modern-product-card__arrow">
+            <ArrowRight size={14} />
+          </span>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 }
 
@@ -73,26 +126,50 @@ export default function FeaturedProducts() {
     let cancelled = false;
     setLoading(true);
     getFeaturedProducts()
-      .then((data) => { if (!cancelled) { setProducts(data); setLoading(false); } })
-      .catch(() => { if (!cancelled) { setError('Unable to load products.'); setLoading(false); } });
-    return () => { cancelled = true; };
+      .then((data) => {
+        if (!cancelled) {
+          setProducts(data);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setError('Unable to load featured collection.');
+          setLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
     <section className="featured section" aria-labelledby="featured-title">
       <div className="container">
-        <header className="featured__header">
+        <motion.header
+          className="featured__header"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="featured__header-left">
-            <p className="section-label">Hand-Picked</p>
-            <div className="divider" />
+            <span className="featured__pill">
+              <Sparkles size={13} />
+              Curated Selection
+            </span>
             <h2 id="featured-title" className="featured__title">
-              Featured Collection
+              Featured <span className="featured__title-highlight">Collection</span>
             </h2>
+            <p className="featured__subtitle">
+              Hand-picked precision garments and signature fragrances tailored for urban aesthetics.
+            </p>
           </div>
           <Link to="/shop" className="featured__view-all">
-            View All <span aria-hidden="true">→</span>
+            <span>Explore Catalog</span>
+            <ArrowRight size={15} />
           </Link>
-        </header>
+        </motion.header>
 
         {loading && <CardSkeleton count={4} />}
 
@@ -106,25 +183,31 @@ export default function FeaturedProducts() {
         )}
 
         {!loading && !error && (
-          <div className="featured__grid">
-            {products.map((p, i) => (
-              <div
-                key={p.id}
-                className="animate-fade-up"
-                style={{ animationDelay: `${i * 80}ms` }}
-              >
-                <ProductCard product={p} />
-              </div>
+          <motion.div
+            className="featured__grid"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+          >
+            {products.map((p) => (
+              <ProductCard key={p.id} product={p} />
             ))}
-          </div>
+          </motion.div>
         )}
 
-        <div className="featured__cta">
-          <Link to="/shop" className="featured__cta-link">
-            <Tag size={14} />
-            Explore the Full Collection
+        <motion.div
+          className="featured__bottom-cta"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <Link to="/shop" className="featured__cta-btn">
+            <span>View All 150+ Drops &amp; Scents</span>
+            <ArrowRight size={16} />
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

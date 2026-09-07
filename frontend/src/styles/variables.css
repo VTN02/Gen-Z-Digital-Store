@@ -1,49 +1,66 @@
 /* =============================================================================
    Gen-Z Digital Storefront — CSS Design Tokens
-   Dark editorial fashion brand aesthetic
+   Modern Cyber-Obsidian & Electric Indigo / Ice Chrome aesthetic (Zero Gold)
+   Balenciaga / Off-White editorial minimalism
    ============================================================================= */
 
 :root {
-  /* ── Color Palette ────────────────────────────────────────────────────────── */
-  --color-black:          #080808;
-  --color-true-black:     #000000;
-  --color-white:          #f8f6f2;
-  --color-off-white:      #edeae4;
+  /* ── Color Palette (Zero Gold) ─────────────────────────────────────────────── */
+  --color-black:          #09090b;
+  --color-true-black:     #050507;
+  --color-white:          #f8fafc;
+  --color-off-white:      #f1f5f9;
 
-  /* Brand accent — warm gold */
-  --color-accent:         #c9a96e;
-  --color-accent-light:   #dbbf8a;
-  --color-accent-dark:    #a8834a;
-  --color-accent-muted:   rgba(201, 169, 110, 0.15);
+  /* Brand accent — Electric Indigo & Cyber Violet (No Gold) */
+  --color-accent:         #6366f1;
+  --color-accent-light:   #818cf8;
+  --color-accent-dark:    #4f46e5;
+  --color-accent-muted:   rgba(99, 102, 241, 0.15);
 
-  /* Surfaces */
-  --color-surface-0:      #080808;
-  --color-surface-1:      #111111;
-  --color-surface-2:      #181818;
-  --color-surface-3:      #222222;
-  --color-surface-4:      #2a2a2a;
+  /* Secondary / Highlight — Ice Cyan & Chrome */
+  --color-cyan:           #06b6d4;
+  --color-cyan-light:     #38bdf8;
+  --color-cyan-glow:      #06b6d4;
+  --color-violet:         #8b5cf6;
+  --color-chrome:         #e2e8f0;
 
-  /* Borders */
-  --color-border:         #2a2a2a;
-  --color-border-light:   #333333;
-  --color-border-focus:   var(--color-accent);
+  /* Editorial Modern Gradients */
+  --gradient-primary:     linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #38bdf8 100%);
+  --gradient-chrome:      linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #64748b 100%);
+  --gradient-card:        linear-gradient(180deg, rgba(24, 24, 27, 0.7) 0%, rgba(9, 9, 11, 0.95) 100%);
+  --gradient-mesh:        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.2) 0px, transparent 50%),
+                          radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%);
 
-  /* Text */
-  --color-text-primary:   #f0ece6;
-  --color-text-secondary: #a09a92;
-  --color-text-muted:     #5c5650;
-  --color-text-disabled:  #3a3630;
-  --color-text-inverse:   #080808;
+  /* Matte Obsidian Surfaces */
+  --color-surface-0:      #09090b;
+  --color-surface-1:      #111115;
+  --color-surface-2:      #18181b;
+  --color-surface-3:      #202026;
+  --color-surface-4:      #272730;
+
+  /* Borders & Glassmorphism */
+  --color-border:         rgba(255, 255, 255, 0.08);
+  --color-border-light:   rgba(255, 255, 255, 0.16);
+  --color-border-focus:   #6366f1;
+  --color-glass-border:   rgba(99, 102, 241, 0.25);
+  --color-glass-bg:       rgba(17, 17, 21, 0.75);
+
+  /* Typography Colors */
+  --color-text-primary:   #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted:     #64748b;
+  --color-text-disabled:  #334155;
+  --color-text-inverse:   #09090b;
 
   /* Status */
-  --color-success:        #4caf7d;
-  --color-success-bg:     rgba(76, 175, 125, 0.12);
-  --color-warning:        #d4a017;
-  --color-warning-bg:     rgba(212, 160, 23, 0.12);
-  --color-error:          #e05252;
-  --color-error-bg:       rgba(224, 82, 82, 0.12);
-  --color-info:           #4a9eff;
-  --color-info-bg:        rgba(74, 158, 255, 0.12);
+  --color-success:        #10b981;
+  --color-success-bg:     rgba(16, 185, 129, 0.12);
+  --color-warning:        #f59e0b;
+  --color-warning-bg:     rgba(245, 158, 11, 0.12);
+  --color-error:          #f43f5e;
+  --color-error-bg:       rgba(244, 63, 94, 0.12);
+  --color-info:           #38bdf8;
+  --color-info-bg:        rgba(56, 189, 248, 0.12);
 
   /* ── Typography ───────────────────────────────────────────────────────────── */
   --font-heading:         'Cormorant Garamond', 'Playfair Display', Georgia, serif;
@@ -62,32 +79,31 @@
   --text-5xl:   3rem;       /* 48px */
   --text-6xl:   3.75rem;    /* 60px */
   --text-7xl:   4.5rem;     /* 72px */
-  --text-8xl:   6rem;       /* 96px */
-
-  /* Line Heights */
-  --leading-tight:   1.15;
-  --leading-snug:    1.3;
-  --leading-normal:  1.5;
-  --leading-relaxed: 1.7;
-
-  /* Letter Spacing */
-  --tracking-tighter: -0.04em;
-  --tracking-tight:   -0.02em;
-  --tracking-normal:   0em;
-  --tracking-wide:     0.05em;
-  --tracking-wider:    0.1em;
-  --tracking-widest:   0.2em;
 
   /* Font Weights */
   --weight-light:     300;
-  --weight-normal:    400;
+  --weight-regular:   400;
   --weight-medium:    500;
   --weight-semibold:  600;
   --weight-bold:      700;
 
-  /* ── Spacing Scale ────────────────────────────────────────────────────────── */
-  --space-1:   0.25rem;   /* 4px  */
-  --space-2:   0.5rem;    /* 8px  */
+  /* Line Heights */
+  --leading-tight:    1.1;
+  --leading-snug:     1.25;
+  --leading-normal:   1.5;
+  --leading-relaxed:  1.65;
+
+  /* Letter Spacing */
+  --tracking-tight:   -0.02em;
+  --tracking-tighter: -0.04em;
+  --tracking-normal:   0;
+  --tracking-wide:     0.05em;
+  --tracking-wider:    0.1em;
+  --tracking-widest:   0.2em;
+
+  /* ── Spacing ──────────────────────────────────────────────────────────────── */
+  --space-1:   0.25rem;   /* 4px */
+  --space-2:   0.5rem;    /* 8px */
   --space-3:   0.75rem;   /* 12px */
   --space-4:   1rem;      /* 16px */
   --space-5:   1.25rem;   /* 20px */
@@ -100,55 +116,41 @@
   --space-24:  6rem;      /* 96px */
   --space-32:  8rem;      /* 128px */
 
-  /* ── Border Radius ────────────────────────────────────────────────────────── */
-  --radius-xs:   2px;
-  --radius-sm:   4px;
-  --radius-md:   8px;
-  --radius-lg:   12px;
-  --radius-xl:   16px;
-  --radius-2xl:  24px;
-  --radius-full: 9999px;
+  /* ── Layout ───────────────────────────────────────────────────────────────── */
+  --max-width:        1280px;
+  --content-width:    1140px;
+  --header-height:    72px;
+  --sidebar-width:    260px;
 
-  /* ── Shadows ──────────────────────────────────────────────────────────────── */
-  --shadow-xs:    0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-sm:    0 2px 8px rgba(0, 0, 0, 0.5);
-  --shadow-md:    0 4px 16px rgba(0, 0, 0, 0.6);
-  --shadow-lg:    0 8px 32px rgba(0, 0, 0, 0.7);
-  --shadow-xl:    0 16px 48px rgba(0, 0, 0, 0.8);
-  --shadow-glow:  0 0 24px rgba(201, 169, 110, 0.25);
-  --shadow-glow-strong: 0 0 40px rgba(201, 169, 110, 0.4);
-  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  /* ── Radii ────────────────────────────────────────────────────────────────── */
+  --radius-none:  0;
+  --radius-xs:    2px;
+  --radius-sm:    4px;
+  --radius-md:    8px;
+  --radius-lg:    14px;
+  --radius-xl:    20px;
+  --radius-full:  9999px;
+
+  /* ── Shadows & Glows (Zero Gold) ──────────────────────────────────────────── */
+  --shadow-sm:        0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md:        0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg:        0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+  --shadow-xl:        0 20px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
+  --shadow-glow:      0 0 30px rgba(99, 102, 241, 0.28);
+  --shadow-accent-glow: 0 0 25px -4px rgba(99, 102, 241, 0.35);
 
   /* ── Transitions ──────────────────────────────────────────────────────────── */
   --transition-fast:   150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base:   250ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow:   400ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* ── Z-Index ──────────────────────────────────────────────────────────────── */
-  --z-below:   -1;
-  --z-base:     0;
-  --z-raised:  10;
-  --z-dropdown: 50;
-  --z-sticky:  80;
-  --z-navbar:  100;
-  --z-overlay: 150;
-  --z-modal:   200;
-  --z-toast:   300;
-
-  /* ── Layout ───────────────────────────────────────────────────────────────── */
-  --container-max:     1280px;
-  --container-narrow:  960px;
-  --navbar-height:     72px;
-  --sidebar-width:     260px;
-}
-
-/* ── Reduced Motion ─────────────────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  :root {
-    --transition-fast:   0ms;
-    --transition-base:   0ms;
-    --transition-slow:   0ms;
-    --transition-spring: 0ms;
-  }
+  /* ── Z-Index Scale ────────────────────────────────────────────────────────── */
+  --z-base:       0;
+  --z-dropdown:   100;
+  --z-sticky:     200;
+  --z-fixed:      300;
+  --z-modal-bg:   400;
+  --z-modal:      500;
+  --z-toast:      600;
 }
