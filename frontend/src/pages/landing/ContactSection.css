@@ -232,6 +232,33 @@
   color: #ffffff;
 }
 
+.cta-banner__btn-review {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #7dd3fc;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 9999px;
+  cursor: pointer;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  transition: all 0.25s ease;
+}
+
+.cta-banner__btn-review:hover {
+  background: rgba(56, 189, 248, 0.22);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
+  transform: translateY(-2px);
+}
+
 .cta-banner__btn-ghost {
   display: inline-flex;
   align-items: center;

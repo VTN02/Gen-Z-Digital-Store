@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Award,
@@ -7,8 +8,10 @@ import {
   Headphones,
   ArrowRight,
   ShieldCheck,
+  Star,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import SubmitReviewModal from '../../components/common/SubmitReviewModal';
 import './ContactSection.css';
 
 const BENEFITS = [
@@ -60,6 +63,8 @@ const cardVariants = {
 };
 
 export default function ContactSection() {
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+
   return (
     <>
       {/* Why Choose Us */}
@@ -141,6 +146,14 @@ export default function ContactSection() {
                 <span>Explore Drops</span>
                 <ArrowRight size={15} />
               </Link>
+              <button
+                type="button"
+                className="cta-banner__btn-review"
+                onClick={() => setReviewModalOpen(true)}
+              >
+                <Star size={14} className="cyan-star-icon" />
+                <span>Write a Review</span>
+              </button>
               <a
                 href="https://wa.me/94XXXXXXXXX"
                 className="cta-banner__btn-ghost"
@@ -153,6 +166,12 @@ export default function ContactSection() {
           </motion.div>
         </div>
       </section>
+
+      {/* Submit Review Modal */}
+      <SubmitReviewModal
+        isOpen={reviewModalOpen}
+        onClose={() => setReviewModalOpen(false)}
+      />
     </>
   );
 }

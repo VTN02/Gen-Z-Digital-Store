@@ -116,11 +116,14 @@
   --space-24:  6rem;      /* 96px */
   --space-32:  8rem;      /* 128px */
 
-  /* ── Layout ───────────────────────────────────────────────────────────────── */
-  --max-width:        1280px;
-  --content-width:    1140px;
-  --header-height:    72px;
-  --sidebar-width:    260px;
+  /* ── Layout & Containers ──────────────────────────────────────────────────── */
+  --container-max:        1240px;
+  --container-narrow:     940px;
+  --max-width:            1240px;
+  --content-width:        1140px;
+  --navbar-height:        74px;
+  --header-height:        74px;
+  --sidebar-width:        260px;
 
   /* ── Radii ────────────────────────────────────────────────────────────────── */
   --radius-none:  0;
@@ -150,7 +153,8 @@
   --z-dropdown:   100;
   --z-sticky:     200;
   --z-fixed:      300;
-  --z-modal-bg:   400;
-  --z-modal:      500;
-  --z-toast:      600;
+  --z-navbar:     800;
+  --z-modal-bg:   900;
+  --z-modal:      1000;
+  --z-toast:      1100;
 }

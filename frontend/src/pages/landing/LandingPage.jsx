@@ -2,6 +2,7 @@ import HeroSection from './HeroSection';
 import CategoriesSection from './CategoriesSection';
 import FeaturedProducts from './FeaturedProducts';
 import AboutSection from './AboutSection';
+import ReviewsSection from './ReviewsSection';
 import ContactSection from './ContactSection';
 
 /**
@@ -16,6 +17,7 @@ export default function LandingPage() {
       <CategoriesSection />
       <FeaturedProducts />
       <AboutSection />
+      <ReviewsSection />
       <ContactSection />
     </>
   );

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingBag, User, Menu, X, Search } from 'lucide-react';
 import './Navbar.css';
 
@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { to: '/', label: 'Home', end: true },
   { to: '/shop', label: 'Shop' },
   { to: '/categories', label: 'Categories' },
+  { to: '/reviews', label: 'Reviews', isSection: true },
   { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
 ];
@@ -14,12 +15,13 @@ const NAV_LINKS = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
   const menuRef = useRef(null);
 
   // Sticky scroll effect
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
+    const handleScroll = () => setScrolled(window.scrollY > 30);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -39,8 +41,27 @@ export default function Navbar() {
   // Lock body scroll when menu open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [menuOpen]);
+
+  const handleLinkClick = (e, link) => {
+    if (link.isSection) {
+      const element = document.getElementById('reviews-title');
+      if (element) {
+        e.preventDefault();
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setMenuOpen(false);
+      } else if (location.pathname !== '/') {
+        e.preventDefault();
+        navigate('/#reviews-title');
+        setMenuOpen(false);
+      }
+    } else {
+      setMenuOpen(false);
+    }
+  };
 
   return (
     <header className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`} role="banner">
@@ -48,40 +69,49 @@ export default function Navbar() {
         {/* Logo */}
         <Link to="/" className="navbar__logo" aria-label="Gen-Z Store home">
           <span className="navbar__logo-text">GEN-Z</span>
-          <span className="navbar__logo-dot" aria-hidden="true">·</span>
+          <span className="navbar__logo-dot" aria-hidden="true">
+            ·
+          </span>
         </Link>
 
-        {/* Desktop nav */}
+        {/* Desktop nav menu */}
         <nav className="navbar__links" aria-label="Main navigation">
-          {NAV_LINKS.map(({ to, label, end }) => (
+          {NAV_LINKS.map((link) => (
             <NavLink
-              key={to}
-              to={to}
-              end={end}
+              key={link.to}
+              to={link.to}
+              end={link.end}
+              onClick={(e) => handleLinkClick(e, link)}
               className={({ isActive }) =>
-                `navbar__link ${isActive ? 'navbar__link--active' : ''}`
+                `navbar__link ${isActive && !link.isSection ? 'navbar__link--active' : ''}`
               }
             >
-              {label}
+              {link.label}
             </NavLink>
           ))}
         </nav>
 
         {/* Actions */}
         <div className="navbar__actions">
-          <button className="navbar__icon-btn" aria-label="Search">
+          <button type="button" className="navbar__icon-btn" aria-label="Search Catalog" title="Search">
             <Search size={18} />
           </button>
-          <button className="navbar__icon-btn" aria-label="Account">
+          <button type="button" className="navbar__icon-btn" aria-label="User Account" title="Account">
             <User size={18} />
           </button>
-          <button className="navbar__icon-btn navbar__cart-btn" aria-label="Shopping cart">
+          <button
+            type="button"
+            className="navbar__icon-btn navbar__cart-btn"
+            aria-label="Shopping bag"
+            title="Cart"
+          >
             <ShoppingBag size={18} />
             <span className="navbar__cart-count">0</span>
           </button>
 
           {/* Mobile menu toggle */}
           <button
+            type="button"
             className="navbar__menu-toggle"
             onClick={() => setMenuOpen((v) => !v)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
@@ -101,25 +131,25 @@ export default function Navbar() {
         aria-label="Mobile navigation"
         aria-hidden={!menuOpen}
       >
-        {NAV_LINKS.map(({ to, label, end }) => (
+        {NAV_LINKS.map((link) => (
           <NavLink
-            key={to}
-            to={to}
-            end={end}
+            key={link.to}
+            to={link.to}
+            end={link.end}
             className={({ isActive }) =>
-              `navbar__mobile-link ${isActive ? 'navbar__mobile-link--active' : ''}`
+              `navbar__mobile-link ${isActive && !link.isSection ? 'navbar__mobile-link--active' : ''}`
             }
-            onClick={() => setMenuOpen(false)}
+            onClick={(e) => handleLinkClick(e, link)}
           >
-            {label}
+            {link.label}
           </NavLink>
         ))}
         <div className="navbar__mobile-actions">
-          <button className="navbar__mobile-action-btn">
+          <button type="button" className="navbar__mobile-action-btn">
             <User size={16} /> Account
           </button>
-          <button className="navbar__mobile-action-btn">
-            <ShoppingBag size={16} /> Cart (0)
+          <button type="button" className="navbar__mobile-action-btn">
+            <ShoppingBag size={16} /> Bag (0)
           </button>
         </div>
       </nav>

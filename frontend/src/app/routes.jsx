@@ -3,11 +3,17 @@ import StorefrontLayout from '../components/layout/StorefrontLayout';
 import AdminLayout from '../components/layout/AdminLayout';
 import LandingPage from '../pages/landing/LandingPage';
 
+import AdminLogin from '../epics/ep04-administration/pages/AdminLogin';
+import AdminDashboard from '../epics/ep04-administration/pages/AdminDashboard';
+import SupplierListPage from '../modules/supplier-procurement/pages/SupplierListPage';
+import AdminReviewListPage from '../epics/ep03-delivery-review/pages/AdminReviewListPage';
+
+
 /**
  * Application routes.
  *
- * Stage 1: Landing page + Admin auth guard placeholder
- * Stage 2+: Admin dashboard, EP-03, EP-04, Supplier pages
+ * Storefront: Landing page, Shop, Categories, Reviews, Customer
+ * Admin: Login, Executive Dashboard, Deliveries, Reviews, Staff, Settings
  */
 export default function AppRoutes() {
   return (
@@ -28,17 +34,19 @@ export default function AppRoutes() {
         <Route path="*" element={<NotFound />} />
       </Route>
 
+      {/* ── Admin Login (Publicly accessible login portal) ──────────── */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+
       {/* ── Admin (protected — requires auth) ──────────────────────── */}
       <Route path="/admin" element={<AdminLayout />}>
-        {/* Stage 2: admin dashboard, deliveries, reviews, suppliers */}
-        <Route index element={<ComingSoon title="Admin Dashboard" />} />
-        <Route path="dashboard" element={<ComingSoon title="Admin Dashboard" />} />
-        <Route path="deliveries" element={<ComingSoon title="Delivery Management" />} />
-        <Route path="reviews" element={<ComingSoon title="Review Management" />} />
-        <Route path="suppliers" element={<ComingSoon title="Supplier Management" />} />
+        <Route index element={<AdminDashboard />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="inventory" element={<ComingSoon title="Inventory & Stock Management" />} />
+        <Route path="suppliers" element={<SupplierListPage />} />
+        <Route path="reviews" element={<AdminReviewListPage />} />
+        <Route path="deliveries" element={<ComingSoon title="Delivery Management & Tracking" />} />
         <Route path="staff" element={<ComingSoon title="Staff Management" />} />
         <Route path="settings" element={<ComingSoon title="Store Settings" />} />
-        <Route path="audit-logs" element={<ComingSoon title="Audit Logs" />} />
       </Route>
     </Routes>
   );

@@ -11,6 +11,9 @@ const { errorMiddleware } = require('./middleware/error.middleware');
 
 // Route imports
 const adminAuthRoutes = require('./epics/ep04-administration/routes/auth.routes');
+const supplierRoutes = require('./modules/supplier-procurement/routes/supplier.routes');
+const { publicReviewRoutes, adminReviewRoutes } = require('./epics/ep03-delivery-review/routes/review.routes');
+
 
 const app = express();
 
@@ -19,8 +22,21 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
 }));
 
+const allowedOrigins = [
+  config.cors.origin,
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175',
+];
+
 app.use(cors({
-  origin: config.cors.origin,
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin) || (config.isDev && /^http:\/\/localhost:\d+$/.test(origin))) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS: ' + origin));
+  },
   credentials: true, // Allow cookies
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -51,9 +67,13 @@ app.get('/health', (req, res) => {
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
 app.use('/api/admin/auth', adminAuthRoutes);
+app.use('/api/admin/suppliers', supplierRoutes);
+app.use('/api/admin/reviews', adminReviewRoutes);
+app.use('/api/reviews', publicReviewRoutes);
 
-// EP-01 (Developer 1) — placeholder
+// EP-01 Product & Inventory (Developer 1) — placeholder
 // app.use('/api/products', productRoutes);
+
 
 // EP-02 (Developer 2) — placeholder
 // app.use('/api/orders', orderRoutes);
@@ -65,8 +85,8 @@ app.use('/api/admin/auth', adminAuthRoutes);
 // EP-04 Admin — placeholder (Stage 2)
 // app.use('/api/admin', adminRoutes);
 
-// Supplier module — placeholder (Stage 2)
-// app.use('/api/suppliers', supplierRoutes);
+// Supplier module legacy alias
+app.use('/api/suppliers', supplierRoutes);
 
 // ─── 404 Handler ─────────────────────────────────────────────────────────────
 app.use((req, res) => {

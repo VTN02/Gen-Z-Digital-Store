@@ -28,6 +28,7 @@ async function validateKey(req, res, next) {
       success: true,
       message: 'Authenticated successfully.',
       admin,
+      token,
     });
   } catch (err) {
     next(err);
