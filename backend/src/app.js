@@ -13,6 +13,7 @@ const { errorMiddleware } = require('./middleware/error.middleware');
 const adminAuthRoutes = require('./epics/ep04-administration/routes/auth.routes');
 const adminDashboardRoutes = require('./epics/ep04-administration/routes/dashboard.routes');
 const supplierRoutes = require('./modules/supplier-procurement/routes/supplier.routes');
+const { publicReviewRoutes, adminReviewRoutes } = require('./epics/ep03-delivery-review/routes/review.routes');
 
 const app = express();
 
@@ -55,6 +56,8 @@ app.get('/health', (req, res) => {
 app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/admin/dashboard', adminDashboardRoutes);
 app.use('/api/admin/suppliers', supplierRoutes);
+app.use('/api/admin/reviews', adminReviewRoutes);
+app.use('/api/reviews', publicReviewRoutes);
 
 // EP-01 (Developer 1) — placeholder
 // app.use('/api/products', productRoutes);

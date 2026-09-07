@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Award, Sparkles, MessageCircle, Truck, Headphones } from 'lucide-react';
+import { Award, Sparkles, MessageCircle, Truck, Headphones, Star, MessageSquarePlus } from 'lucide-react';
+import SubmitReviewModal from '../../epics/ep03-delivery-review/components/SubmitReviewModal';
 import './ContactSection.css';
 
 const BENEFITS = [
@@ -31,6 +33,8 @@ const BENEFITS = [
 ];
 
 export default function ContactSection() {
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+
   return (
     <>
       {/* Why Shop With Us */}
@@ -62,6 +66,26 @@ export default function ContactSection() {
               </div>
             ))}
           </div>
+
+          {/* Community Review Callout */}
+          <div className="community-review-strip">
+            <div className="community-review-strip__rating">
+              <div className="community-review-strip__stars">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={15} className="gold-star-filled" />
+                ))}
+              </div>
+              <span className="community-review-strip__score">4.9 / 5.0 Rating</span>
+              <span className="community-review-strip__count">· Verified Customer Reviews</span>
+            </div>
+            <button
+              className="community-review-strip__btn"
+              onClick={() => setReviewModalOpen(true)}
+            >
+              <MessageSquarePlus size={15} />
+              <span>Submit a Customer Review</span>
+            </button>
+          </div>
         </div>
       </section>
 
@@ -82,6 +106,13 @@ export default function ContactSection() {
               <Link to="/shop" className="cta-banner__btn-primary">
                 Explore Collection
               </Link>
+              <button
+                className="cta-banner__btn-review"
+                onClick={() => setReviewModalOpen(true)}
+              >
+                <Star size={14} />
+                <span>Write a Review</span>
+              </button>
               <a
                 href="https://wa.me/94XXXXXXXXX"
                 className="cta-banner__btn-ghost"
@@ -93,6 +124,12 @@ export default function ContactSection() {
           </div>
         </div>
       </section>
+
+      {/* Customer Review Submission Modal */}
+      <SubmitReviewModal
+        isOpen={reviewModalOpen}
+        onClose={() => setReviewModalOpen(false)}
+      />
     </>
   );
 }
