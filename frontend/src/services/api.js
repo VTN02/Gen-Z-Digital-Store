@@ -4,4 +4,5 @@
  */
 
 export * from './auth.service';
+export * from './dashboard.service';
 export { default as apiClient } from './apiClient';

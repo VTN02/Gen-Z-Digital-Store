@@ -1,0 +1,199 @@
+.admin-login-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  background-color: var(--color-black);
+  overflow: hidden;
+}
+
+.admin-login-bg-glow {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(201, 169, 110, 0.12) 0%, rgba(10, 10, 10, 0) 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.admin-login-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 460px;
+  background: rgba(17, 17, 17, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
+              0 0 0 1px rgba(201, 169, 110, 0.1);
+}
+
+.admin-login-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  text-decoration: none;
+  margin-bottom: var(--space-6);
+  transition: color var(--transition-fast);
+}
+
+.admin-login-back-link:hover {
+  color: var(--color-accent);
+}
+
+.admin-login-header {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.admin-login-badge-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-3);
+}
+
+.admin-login-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(201, 169, 110, 0.1);
+  border: 1px solid rgba(201, 169, 110, 0.3);
+  color: var(--color-accent);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.admin-login-title {
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.admin-login-title-gold {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.admin-login-subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.admin-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.admin-login-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.admin-login-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.admin-login-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.admin-login-input {
+  width: 100%;
+  padding: 12px 44px 12px 16px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  transition: all var(--transition-fast);
+}
+
+.admin-login-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.15);
+}
+
+.admin-login-input--error {
+  border-color: var(--color-error);
+}
+
+.admin-login-input--error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.15);
+}
+
+.admin-login-eye-btn {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color var(--transition-fast);
+}
+
+.admin-login-eye-btn:hover {
+  color: var(--color-text-primary);
+}
+
+.admin-login-error {
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  color: #ff8a80;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  animation: fadeIn 0.2s ease;
+}
+
+.admin-login-submit {
+  margin-top: var(--space-2);
+}
+
+.admin-login-footer-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  text-align: center;
+  margin-top: var(--space-2);
+}
+
+.gold-accent-icon {
+  color: var(--color-accent);
+  flex-shrink: 0;
+}

@@ -2,12 +2,14 @@ import { Routes, Route } from 'react-router-dom';
 import StorefrontLayout from '../components/layout/StorefrontLayout';
 import AdminLayout from '../components/layout/AdminLayout';
 import LandingPage from '../pages/landing/LandingPage';
+import AdminLogin from '../pages/admin/AdminLogin';
+import AdminDashboard from '../pages/admin/AdminDashboard';
 
 /**
  * Application routes.
  *
- * Stage 1: Landing page + Admin auth guard placeholder
- * Stage 2+: Admin dashboard, EP-03, EP-04, Supplier pages
+ * Storefront: Landing page, Shop, Categories, Reviews, Customer
+ * Admin: Login, Executive Dashboard, Deliveries, Reviews, Staff, Settings
  */
 export default function AppRoutes() {
   return (
@@ -28,17 +30,17 @@ export default function AppRoutes() {
         <Route path="*" element={<NotFound />} />
       </Route>
 
+      {/* ── Admin Login (Publicly accessible login portal) ──────────── */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+
       {/* ── Admin (protected — requires auth) ──────────────────────── */}
       <Route path="/admin" element={<AdminLayout />}>
-        {/* Stage 2: admin dashboard, deliveries, reviews, suppliers */}
-        <Route index element={<ComingSoon title="Admin Dashboard" />} />
-        <Route path="dashboard" element={<ComingSoon title="Admin Dashboard" />} />
-        <Route path="deliveries" element={<ComingSoon title="Delivery Management" />} />
-        <Route path="reviews" element={<ComingSoon title="Review Management" />} />
-        <Route path="suppliers" element={<ComingSoon title="Supplier Management" />} />
-        <Route path="staff" element={<ComingSoon title="Staff Management" />} />
-        <Route path="settings" element={<ComingSoon title="Store Settings" />} />
-        <Route path="audit-logs" element={<ComingSoon title="Audit Logs" />} />
+        <Route index element={<AdminDashboard />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="deliveries" element={<ComingSoon title="Delivery Management & Tracking (EP-03)" />} />
+        <Route path="reviews" element={<ComingSoon title="Review & Feedback Moderation (EP-03)" />} />
+        <Route path="staff" element={<ComingSoon title="Staff & Role Management" />} />
+        <Route path="settings" element={<ComingSoon title="Store Configuration" />} />
       </Route>
     </Routes>
   );
@@ -67,7 +69,7 @@ function ComingSoon({ title }) {
         {title}
       </h1>
       <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-        Coming Soon — Stage 2
+        Under Development
       </p>
     </div>
   );
@@ -90,7 +92,7 @@ function NotFound() {
         Page Not Found
       </h1>
       <a href="/" style={{ color: 'var(--color-accent)', fontSize: '0.875rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-        ← Back to Home
+        &larr; Back to Home
       </a>
     </div>
   );

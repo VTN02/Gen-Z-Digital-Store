@@ -4,8 +4,17 @@ import { validateAdminKey, adminLogout } from '../services/auth.service';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [admin, setAdmin] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return sessionStorage.getItem('genz_admin_auth') === 'true';
+  });
+  const [admin, setAdmin] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('genz_admin_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
   const [loading, setLoading] = useState(false);
 
   const login = useCallback(async (key) => {
@@ -13,7 +22,9 @@ export function AuthProvider({ children }) {
     try {
       const data = await validateAdminKey(key);
       setIsAuthenticated(true);
-      setAdmin(data.admin);
+      setAdmin(data.admin || { role: 'admin' });
+      sessionStorage.setItem('genz_admin_auth', 'true');
+      sessionStorage.setItem('genz_admin_user', JSON.stringify(data.admin || { role: 'admin' }));
       return { success: true };
     } catch (err) {
       const message =
@@ -32,6 +43,8 @@ export function AuthProvider({ children }) {
     } finally {
       setIsAuthenticated(false);
       setAdmin(null);
+      sessionStorage.removeItem('genz_admin_auth');
+      sessionStorage.removeItem('genz_admin_user');
     }
   }, []);
 
